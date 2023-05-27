@@ -2,6 +2,8 @@
 
 package OpenSky::API;
 
+# ABSTRACT: Perl interface to the OpenSky Network API
+
 our $VERSION = '0.001';
 use OpenSky::API::Moose types => [
     qw(
