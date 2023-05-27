@@ -1,91 +1,92 @@
 # ABSTRACT: A class representing a state from the OpenSky Network API
 
-package OpenSky::API::Core::StateVector {
-    use OpenSky::API::Moose types => [
-        qw(
-          Dict
-          HashRef
-          InstanceOf
-          NonEmptyStr
-          Num
-          Optional
-        )
-    ];
-    use OpenSky::API::Types qw(
-      Longitude
-      Latitude
+package OpenSky::API::Core::StateVector;
+
+our $VERSION = '0.001';
+use OpenSky::API::Moose types => [
+    qw(
+      Dict
+      HashRef
+      InstanceOf
+      NonEmptyStr
+      Num
+      Optional
+    )
+];
+use OpenSky::API::Types qw(
+  Longitude
+  Latitude
+);
+use PerlX::Maybe;
+
+my @PARAMS = qw(
+  icao24
+  callsign
+  origin_country
+  time_position
+  last_contact
+  longitude
+  latitude
+  baro_altitude
+  on_ground
+  velocity
+  true_track
+  vertical_rate
+  sensors
+  geo_altitude
+  squawk
+  spi
+  position_source
+  category
+);
+
+around 'BUILDARGS' => sub ( $orig, $class, $state ) {
+    my %value_for;
+    @value_for{@PARAMS} = @$state;
+    return $class->$orig(%value_for);
+};
+
+param [@PARAMS] => ( required => 1 );
+
+method category_name() {
+    my $category = $self->category // 0;
+    $category = 0 if $category > 20;
+    return '' unless $category;
+    my @names = (
+        'No information at all',
+        'No ADS-B Emitter Category Information',
+        'Light (< 15500 lbs)',
+        'Small (15500 to 75000 lbs)',
+        'Large (75000 to 300000 lbs)',
+        'High Vortex Large (aircraft such as B-757)',
+        'Heavy (> 300000 lbs)',
+        'High Performance (> 5g acceleration and 400 kts)',
+        'Rotorcraft',
+        'Glider / sailplane',
+        'Lighter-than-air',
+        'Parachutist / Skydiver',
+        'Ultralight / hang-glider / paraglider',
+        'Reserved',
+        'Unmanned Aerial Vehicle',
+        'Space / Trans-atmospheric vehicle',
+        'Surface Vehicle – Emergency Vehicle',
+        'Surface Vehicle – Service Vehicle',
+        'Point Obstacle (includes tethered balloons)',
+        'Cluster Obstacle',
+        'Line Obstacle',
     );
-    use PerlX::Maybe;
+    return $names[$category];
+}
 
-    my @PARAMS = qw(
-      icao24
-      callsign
-      origin_country
-      time_position
-      last_contact
-      longitude
-      latitude
-      baro_altitude
-      on_ground
-      velocity
-      true_track
-      vertical_rate
-      sensors
-      geo_altitude
-      squawk
-      spi
-      position_source
-      category
+method position_source_name() {
+    my $source  = $self->position_source // return 'Uknown';
+    my @sources = (
+        'ADS-B',
+        'ASTERIX',
+        'MLAT',
+        'FLARM',
     );
-
-    around 'BUILDARGS' => sub ( $orig, $class, $state ) {
-        my %value_for;
-        @value_for{@PARAMS} = @$state;
-        return $class->$orig(%value_for);
-    };
-
-    param [@PARAMS] => ( required => 1 );
-
-    method category_name() {
-        my $category = $self->category // 0;
-        $category = 0 if $category > 20;
-        return '' unless $category;
-        my @names = (
-          'No information at all',
-          'No ADS-B Emitter Category Information',
-          'Light (< 15500 lbs)',
-          'Small (15500 to 75000 lbs)',
-          'Large (75000 to 300000 lbs)',
-          'High Vortex Large (aircraft such as B-757)',
-          'Heavy (> 300000 lbs)',
-          'High Performance (> 5g acceleration and 400 kts)',
-          'Rotorcraft',
-          'Glider / sailplane',
-          'Lighter-than-air',
-          'Parachutist / Skydiver',
-          'Ultralight / hang-glider / paraglider',
-          'Reserved',
-          'Unmanned Aerial Vehicle',
-          'Space / Trans-atmospheric vehicle',
-          'Surface Vehicle – Emergency Vehicle',
-          'Surface Vehicle – Service Vehicle',
-          'Point Obstacle (includes tethered balloons)',
-          'Cluster Obstacle',
-          'Line Obstacle',
-        );
-        return $names[$category];
-    }
-
-    method position_source_name() {
-        my $source  = $self->position_source // return 'Uknown';
-        my @sources = (
-            'ADS-B',
-            'ASTERIX',
-            'MLAT',
-            'FLARM',
-        );
-        return $sources[$source];
-    }
+    return $sources[$source];
 }
 
 __END__

@@ -1,51 +1,52 @@
 # ABSTARCT: Internal iterator class for OpenSky::API
 
-package OpenSky::API::Utils::Iterator {
-    use OpenSky::API::Moose types => [
-        qw(
-          ArrayRef
-          Defined
-          InstanceOf
-          PositiveOrZeroInt
-        )
-    ];
+package OpenSky::API::Utils::Iterator;
 
-    param '_rows' => (
-        isa      => ArrayRef [ Defined ],
-        init_arg => 'rows',
-    );
+our $VERSION = '0.001';
+use OpenSky::API::Moose types => [
+    qw(
+      ArrayRef
+      Defined
+      InstanceOf
+      PositiveOrZeroInt
+    )
+];
 
-    field '_index' => (
-        is      => 'rw',
-        writer  => 1,
-        isa     => PositiveOrZeroInt,
-        default => 0,
-    );
+param '_rows' => (
+    isa      => ArrayRef [Defined],
+    init_arg => 'rows',
+);
 
-    method first() {
-        return $self->_rows->[0];
-    }
+field '_index' => (
+    is      => 'rw',
+    writer  => 1,
+    isa     => PositiveOrZeroInt,
+    default => 0,
+);
 
-    method next() {
-        my $i    = $self->_index;
-        my $next = $self->_rows->[$i] or return;
-        $self->_set_index( $i + 1 );
-        return $next;
-    }
+method first() {
+    return $self->_rows->[0];
+}
 
-    method reset() {
-        $self->set_index(0);
-        return 1;
-    }
+method next() {
+    my $i    = $self->_index;
+    my $next = $self->_rows->[$i] or return;
+    $self->_set_index( $i + 1 );
+    return $next;
+}
 
-    method all() {
-        return @{ $self->_rows };
-    }
+method reset() {
+    $self->set_index(0);
+    return 1;
+}
 
-    method count() {
-        my @all = $self->all;
-        return scalar @all;
-    }
+method all() {
+    return @{ $self->_rows };
+}
+
+method count() {
+    my @all = $self->all;
+    return scalar @all;
 }
 
 __END__

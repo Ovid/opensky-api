@@ -1,24 +1,38 @@
-package OpenSky::API::States {
-    use OpenSky::API::Moose types => [
-        qw(
-          InstanceOf
-          PositiveOrZeroInt
-        )
-    ];
-    use OpenSky::API::Core::StateVector;
-    use OpenSky::API::Utils::Iterator;
+# A class representing a states response from the OpenSky Network API
 
-    param time    => ( isa => PositiveOrZeroInt );
-    param vectors => ( isa => InstanceOf ['OpenSky::API::Utils::Iterator'] );
+package OpenSky::API::States;
 
-    around 'BUILDARGS' => sub ( $orig, $class, $response ) {
+our $VERSION = '0.001';
+use OpenSky::API::Moose types => [
+    qw(
+      InstanceOf
+      PositiveOrZeroInt
+    )
+];
+use OpenSky::API::Core::StateVector;
+use OpenSky::API::Utils::Iterator;
 
-        my $states = $response->{states};
-        my $time   = $response->{time};
+param time    => ( isa => PositiveOrZeroInt );
+param vectors => ( isa => InstanceOf ['OpenSky::API::Utils::Iterator'] );
 
-        my @state_vectors = map { OpenSky::API::Core::StateVector->new($_) } @$states;
-        my $iterator      = OpenSky::API::Utils::Iterator->new( rows => \@state_vectors );
+around 'BUILDARGS' => sub ( $orig, $class, $response ) {
 
-        return $class->$orig( vectors => $iterator, time => $time );
-    };
-}
+    my $states = $response->{states};
+    my $time   = $response->{time};
+
+    my @state_vectors = map { OpenSky::API::Core::StateVector->new($_) } @$states;
+    my $iterator      = OpenSky::API::Utils::Iterator->new( rows => \@state_vectors );
+
+    return $class->$orig( vectors => $iterator, time => $time );
+};
+
+=head1 METHODS
+
+=head2 time
+
+The time which the state vectors in this response are associated with. All
+vectors represent the state of a vehicle with the interval C<[time=1, time]>.
+
+=head2 vectors
+
+Returns an iterator of L<OpenSky::API::Core::StateVector> objects.
