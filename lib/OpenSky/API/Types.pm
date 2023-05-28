@@ -1,7 +1,7 @@
 # ABSTRACT: Type library for OpenSky::API
 
 package OpenSky::API::Types;
-our $VERSION = '0.001';
+our $VERSION = '0.002';
 use Type::Library
   -base,
   -declare => qw(

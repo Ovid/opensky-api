@@ -2,7 +2,7 @@
 
 package OpenSky::API::States;
 
-our $VERSION = '0.001';
+our $VERSION = '0.002';
 use Moose;
 use OpenSky::API::Types qw(
   InstanceOf
