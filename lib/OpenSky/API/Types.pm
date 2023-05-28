@@ -30,7 +30,7 @@ No user-serviceable parts inside.
 
 =head1 CUSTOM TYPES
 
-=heaed2 Longitude
+=head2 Longitude
 
 A number between -180 and 180, inclusive.
 
