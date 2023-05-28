@@ -119,7 +119,10 @@ method get_states( $seconds, $icao24, $bbox, $extended ) {
     }
 
     my $route    = '/states/all';
-    my $response = $self->_get_response( route => $route, params => \%params ) or return;
+    my $response = $self->_get_response( route => $route, params => \%params ) // {
+        time   => time - ($seconds // 0),
+        states => [],
+    };
     if ( $self->raw ) {
         return $response;
     }
@@ -191,7 +194,6 @@ method _get_response( $route, $params, $credits ) {
     my $remaining = $response->headers->header('X-Rate-Limit-Remaining');
 
     $self->_debug("GET $url\n");
-    $self->_debug( ref($response) . "\n" );
     $self->_debug( $response->headers->to_string . "\n" );
 
     # not all requests cost credits, so we only want to set the limit if
@@ -207,14 +209,14 @@ method _get_response( $route, $params, $credits ) {
         croak $response->to_string;
     }
     return $remaining if $credits;
-    if ( $self->raw ) {
+    if ( $self->debug ) {
         $self->_debug( $response->body );
     }
     return decode_json( $response->body );
 }
 
 method _debug ($msg) {
-    return !$self->debug;
+    return if !$self->debug;
     say STDERR $msg;
 }
 

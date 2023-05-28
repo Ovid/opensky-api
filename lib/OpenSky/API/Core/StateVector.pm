@@ -34,6 +34,10 @@ around 'BUILDARGS' => sub ( $orig, $class, $state ) {
     return $class->$orig(%value_for);
 };
 
+sub _get_params ($class) {
+    return @PARAMS;
+}
+
 method category_name() {
     my $category = $self->category // 0;
     $category = 0 if $category > 20;
