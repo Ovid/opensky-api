@@ -2,6 +2,8 @@ Revision history for OpenSky-API
 
 {{$NEXT}}
 
+0.002     2023-05-28 16:18:26 CEST
+
 0.001     2023-05-28 15:34:58 CEST
 
           - First version of OpenSKY::API for Perl
