@@ -24,6 +24,8 @@ sub _get_params ($class) {
     );
 }
 
+param [ $class->_get_params() ] => ( required => 1 );
+
 =head1 DESCRIPTION
 
 This class is not to be instantiated directly. It is a read-only class representing 

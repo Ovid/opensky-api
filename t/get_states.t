@@ -4,8 +4,8 @@ use lib 'lib', 't/lib';
 use Test::Most;
 use OpenSky::API::Test qw( set_response );
 
-my $raw     = OpenSky::API->new( raw     => 1, testing => 1 );
-my $objects = OpenSky::API->new( testing => 1 );
+my $fetch_raw_data = OpenSky::API->new( raw     => 1, testing => 1 );
+my $open_sky       = OpenSky::API->new( testing => 1 );
 
 my %params = (
     extended => 1,
@@ -19,18 +19,18 @@ my %params = (
 
 subtest 'Flight data is available' => sub {
     set_response( three_vectors() );
-    my $vectors_raw = $raw->get_states(%params);
+    my $vectors_raw = $fetch_raw_data->get_states(%params);
     set_response( three_vectors() );
-    my $vectors_objects = $objects->get_states(%params);
+    my $states = $open_sky->get_states(%params);
     explain $vectors_raw;
 
     my $state_vectors = $vectors_raw->{states};
     is scalar @$state_vectors, 3, 'We should have three vectors';
-    my $vectors = $vectors_objects->vectors;
+    my $vectors = $states->vectors;
     is $vectors->count, 3, 'We should have three vectors';
 
     my @params = $vectors->first->_get_params;
-    while ( my $flight = $vectors->next ) {
+    while ( my $flight = $states->next ) {
         my $raw_flight = shift @$state_vectors;
         foreach my $param (@params) {
             my $value = shift @$raw_flight;
@@ -47,11 +47,11 @@ Content-Length: 0
 Date: Sun, 28 May 2023 08:02:21 GMT
 END
     set_response($not_found);
-    my $vectors_raw = $raw->get_states(%params);
+    my $vectors_raw = $fetch_raw_data->get_states(%params);
     set_response($not_found);
-    my $vectors_objects = $objects->get_states(%params);
-    ok !@{ $vectors_raw->{states} },      'We should have no state vectors for raw data';
-    ok !$vectors_objects->vectors->count, 'We should have no state vectors for objects';
+    my $states = $open_sky->get_states(%params);
+    ok !@{ $vectors_raw->{states} }, 'We should have no state vectors for raw data';
+    ok !$states->count,              'We should have no state vectors for objects';
 };
 
 done_testing;

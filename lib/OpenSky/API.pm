@@ -136,7 +136,7 @@ sub get_states ( $self, $seconds, $icao24, $bbox, $extended ) {
     }
 
     my $route    = '/states/all';
-    my $response = $self->_get_response( route => $route, params => \%params ) // {
+    my $response = $self->_get_response( route => $route, params => \%params, no_auth_required => 1 ) // {
         time   => time - ( $seconds // 0 ),
         states => [],
     };
@@ -247,24 +247,20 @@ sub get_departures_by_airport ( $self, $airport, $begin, $end ) {
 signature_for _get_response => (
     method => 1,
     named  => [
-        route   => NonEmptyStr,
-        params  => Optional [HashRef],
-        credits => Optional [Bool],
+        route            => NonEmptyStr,
+        params           => Optional [HashRef],
+        credits          => Optional [Bool],
+        no_auth_required => Optional [Bool],
     ],
     named_to_list => 1,
 );
 
-# an easy target to override
-sub _GET ( $self, $url ) {
-    return $self->_ua->get($url)->res;
-}
+sub _get_response ( $self, $route, $params, $credits, $no_auth_required ) {
+    my $url = $self->_url( $route, $params, $no_auth_required );
 
-sub _get_response ( $self, $route, $params, $credits ) {
-    my $url       = $self->_url( $route, $params );
     my $response  = $self->_GET($url);
     my $remaining = $response->headers->header('X-Rate-Limit-Remaining');
 
-    $self->_debug("GET $url\n");
     $self->_debug( $response->headers->to_string . "\n" );
 
     # not all requests cost credits, so we only want to set the limit if
@@ -286,15 +282,249 @@ sub _get_response ( $self, $route, $params, $credits ) {
     return decode_json( $response->body );
 }
 
+# an easy target to override for testing
+sub _GET ( $self, $url ) {
+    $self->_debug("GET $url\n");
+    return $self->_ua->get($url)->res;
+}
+
 sub _debug ( $self, $msg ) {
     return if !$self->debug;
     say STDERR $msg;
 }
 
-sub _url ( $self, $url, $params = {} ) {
+sub _url ( $self, $url, $params = {}, $no_auth_required = 0 ) {
+    my $username = $self->_username;
+    my $password = $self->_password;
+    if ( ( !$username || !$password ) && $no_auth_required ) {
+        return Mojo::URL->new( $self->_base_url . $url )->query($params);
+    }
     $url = Mojo::URL->new( $self->_base_url . $url )->userinfo( $self->_username . ':' . $self->_password );
     $url->query($params);
     return $url;
 }
 
 __PACKAGE__->meta->make_immutable;
+
+__END__
+
+=head1 SYNOPSIS
+
+    use OpenSky::API;
+
+    my $api = OpenSky::API->new(
+        username => 'username',
+        password => 'password',
+    );
+
+    my $states = $api->get_states;
+    my $vectors = $states->vectors;
+    while ( my $vector = $vectors->next ) {
+        say $vector->callsign;
+    }
+
+=head1 DESCRIPTION
+
+This is a Perl interface to the OpenSky Network API. It provides a simple, object-oriented
+interface, but also allows you to fetch raw results for performance.
+
+This is largely based on L<the official Python
+implementation|https://github.com/openskynetwork/opensky-api/blob/master/python/opensky_api.py>,
+but with some changes to make it more user-friendly for Perl developers.
+
+=head1 CONSTRUCTOR
+
+Basic usage:
+
+    my $open_sky = OpenSky::API->new;
+
+This will create an instance of the API object with no authentication. This only allows you access
+to the C<get_states> method.
+
+If you want to use the other methods, you will need to provide a username and password:
+
+    my $open_sky = OpenSky::API->new(
+        username => 'username',
+        password => 'password',
+    );
+
+Alterantively, you can set the C<OPENSKY_USERNAME> and C<OPENSKY_PASSWORD>
+environment variables, or create a C<.openskyrc> file in your home directory
+with the following contents:
+
+    [opensky]
+    username = myusername
+    password = s3cr3t
+
+By default, all methods return objects. If you want to get the raw results, you can set the C<raw>
+attribute in the constructor:
+
+    my $open_sky = OpenSky::API->new(
+        raw => 1,
+    );
+
+If you are debugging why something failed, pass the C<debug> attribute:
+
+    my $open_sky = OpenSky::API->new(
+        debug => 1,
+    );
+
+=head1 METHODS
+
+For more insight to all methods, see L<the OpenSky API
+documentation|https://openskynetwork.github.io/opensky-api/>.
+
+=head2 get_states
+
+    my $states = $api->get_states;
+
+Returns an instance of L<OpenSky::API::States>. if C<< raw => 1 >> was passed
+to the constructor, this will be the raw data structure instead.
+
+This API call can be used to retrieve any state vector of the
+OpenSky. Please note that rate limits apply for this call. For API calls
+without rate limitation, see C<get_my_states>.
+
+By default, the above fetches all current state vectors.
+
+You can (optionally) request state vectors for particular airplanes or times using the following request parameters:
+
+    my $states = $api->get_states(
+        icao24 => 'abc9f3',
+        time   => 1517258400,
+    );
+
+Both parameters are optional.
+
+=over 4
+
+=item * C<icao24>
+
+One or more ICAO24 transponder addresses represented by a hex string (e.g. abc9f3). To filter multiple ICAO24 append the property once for each address. If omitted, the state vectors of all aircraft are returned.
+
+=item * C<time>
+
+A Unix timestamp (seconds since epoch). Only state vectors after this timestamp are returned.
+
+=back
+
+In addition to that, it is possible to query a certain area defined by a
+bounding box of WGS84 coordinates. For this purpose, add the following
+parameters:
+
+    my $states = $api->get_states(
+        bbox => {
+            lomin => -0.5,     # lower bound for the longitude in decimal degrees
+            lamin => 51.25,    # lower bound for the latitude in decimal degrees
+            lomax => 0,        # upper bound for the longitude in decimal degrees
+            lamax => 51.75,    # upper bound for the latitude in decimal degrees
+        },
+    );
+
+You can also request the category of aircraft by adding the following request parameter:
+
+    my $states = $api->get_states(
+        extended => 1,
+    );
+
+Any and all of the above parameters can be combined.
+
+    my $states = $api->get_states(
+        icao24   => 'abc9f3',
+        time     => 1517258400,
+        bbox     => {
+            lomin => -0.5,     # lower bound for the longitude in decimal degrees
+            lamin => 51.25,    # lower bound for the latitude in decimal degrees
+            lomax => 0,        # upper bound for the longitude in decimal degrees
+            lamax => 51.75,    # upper bound for the latitude in decimal degrees
+        },
+        extended => 1,
+    );
+
+=head2 get_my_states
+
+    my $states = $api->get_my_states;
+
+Returns an instance of L<OpenSky::API::States>. if C<< raw => 1 >> was passed,
+this will be the raw data structure instead.
+
+This API call can be used to retrieve state vectors for your own
+sensors without rate limitations. Note that authentication is required for
+this operation, otherwise you will get a 403 - Forbidden.
+
+By default, the above fetches all current state vectors for your states. However, you can also pass
+arguments to fine-tune this:
+
+    my $states = $api->get_my_states(
+        time    => 1517258400,
+        icao24  => 'abc9f3',
+        serials => [ 1234, 5678 ],
+    );
+
+=over 4
+
+=item * C<time>
+	
+The time in seconds since epoch (Unix timestamp to retrieve states for. Current time will be used if omitted.
+
+=item * <icao24>
+
+One or more ICAO24 transponder addresses represented by a hex string (e.g.
+abc9f3). To filter multiple ICAO24 append the property once for each address.
+If omitted, the state vectors of all aircraft are returned.
+
+=item * C<serials>
+
+Retrieve only states of a subset of your receivers. You can pass this argument
+several time to filter state of more than one of your receivers. In this case,
+the API returns all states of aircraft that are visible to at least one of the
+given receivers.
+
+=back
+
+=head2 C<get_arrivals_by_airport>
+
+    my $arrivals = $api->get_arrivals_by_airport('KJFK', $start, $end);
+
+Returns an instance of L<OpenSky::API::Flights>. if C<< raw => 1 >> was
+passed, you will get the raw data structure instead.
+
+Positional arguments:
+
+=over 4
+
+=item * C<airport>
+
+The ICAO code of the airport you want to get arrivals for.
+
+=item * C<start>
+
+The start time in seconds since epoch (Unix timestamp).
+
+=item * C<end>
+
+The end time in seconds since epoch (Unix timestamp).
+
+=back
+
+The interval between start and end time must be smaller than seven days.
+
+=head2 C<get_departures_by_airport>
+
+Identical to C<get_arrivals_by_airport>, but returns departures instead of arrivals.
+
+=head2 C<get_flights_by_aircraft>
+
+    my $flights = $api->get_flights_by_aircraft('abc9f3', $start, $end);
+
+Returns an instance of L<OpenSky::API::Flights>. if C<< raw => 1 >> was passed
+to the constructor, you will get the raw data structure instead.
+
+The first argument is the ICAO24 transponder address of the aircraft you want.
+
+=head2 C<get_flights_from_interval>
+
+    my $flights = $api->get_flights_from_interval($start, $end);
+
+Returns an instance of L<OpenSky::API::Flights>. if C<< raw => 1 >> was passed
+to the constructor, you will get the raw data structure instead.

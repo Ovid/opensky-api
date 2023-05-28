@@ -15,11 +15,10 @@ subtest 'Flight data is available' => sub {
     set_response( one_flight() );
     my $flights_raw = $raw->get_arrivals_by_airport( $airport, $then, $now );
     set_response( one_flight() );
-    my $flights_objects = $objects->get_arrivals_by_airport( $airport, $then, $now );
+    my $flights = $objects->get_arrivals_by_airport( $airport, $then, $now );
 
     is scalar @$flights_raw, 1, 'We should have one flight';
-    my $flights = $flights_objects->flights;
-    is $flights->count, 1, 'We should have one flight';
+    is $flights->count,      1, 'We should have one flight';
 
     while ( my $flight = $flights->next ) {
         my $raw_flight = shift @$flights_raw;
@@ -40,9 +39,9 @@ END
     set_response($not_found);
     my $flights_raw = $raw->get_arrivals_by_airport( $airport, $then, $now );
     set_response($not_found);
-    my $flights_objects = $objects->get_arrivals_by_airport( $airport, $then, $now );
-    ok !@$flights_raw,                    'We should have no flights for raw data';
-    ok !$flights_objects->flights->count, 'We should have no flights for objects';
+    my $flights = $objects->get_arrivals_by_airport( $airport, $then, $now );
+    ok !@$flights_raw,   'We should have no flights for raw data';
+    ok !$flights->count, 'We should have no flights for objects';
 };
 
 subtest 'Bad time intervals' => sub {
