@@ -318,8 +318,7 @@ __END__
     );
 
     my $states = $api->get_states;
-    my $vectors = $states->vectors;
-    while ( my $vector = $vectors->next ) {
+    while ( my $vector = $states->next ) {
         say $vector->callsign;
     }
 
@@ -528,3 +527,59 @@ The first argument is the ICAO24 transponder address of the aircraft you want.
 
 Returns an instance of L<OpenSky::API::Flights>. if C<< raw => 1 >> was passed
 to the constructor, you will get the raw data structure instead.
+
+=head1 EXAMPLES
+
+Perl Wikipedia, L<OpenSky Network|https://en.wikipedia.org/wiki/OpenSky_Network> is ...
+
+    The OpenSky Network is a non-profit association based in Switzerland that
+    provides open access of flight tracking control data. It was set up as
+    a research project by several universities and government entities with
+    the goal to improve the security, reliability and efficiency of the
+    airspace. Its main function is to collect, process and store air traffic
+    control data and provide open access to this data to the public. Similar
+    to many existing flight trackers such as Flightradar24 and FlightAware,
+    the OpenSky Network consists of a multitude of sensors (currently around
+    1000,[2] mostly concentrated in Europe and the US), which are connected to
+    the Internet by volunteers, industrial supporters, academic, and
+    governmental organizations.[3] All collected raw data is archived in a
+    large historical database, containing over 23 trillion air traffic control
+    messages (November 2020). The database is primarily used by researchers
+    from different areas to analyze and improve air traffic control
+    technologies and processes
+
+=head2 Elon Musk's Jet
+
+However, this data can be used to track the movements of certain aircraft. For
+example, Elon Musk's primary private jet (he has three, but this is the one he
+mainly uses), has the ICAO24 transponder address C<a835af>. Running the
+following code ...
+
+    use OpenSky::API;
+
+    my $musks_jets = 'a835af';
+    my $openapi    = OpenSky::API->new;
+
+    my $days = 7;
+    my $now  = time;
+    my $then = $now - 86400 * 7;    # up to 7 days ago
+
+    my $flight_data = $openapi->get_flights_by_aircraft( $musks_jet, $then, $now );
+    say "Jet $jet has " . $flight_data->count . " flights";
+
+As of this writing, that prints out:
+
+    Jet a835af has 6 flights
+
+=head1 ETHICS
+
+There are some ethical considerations to be made when using this module. I was
+ambivalent about writing it, but I decided to do so because I think it's
+important to be aware of the privacy implications. However, it's also
+important to be aware of the L<climate
+implications|https://www.euronews.com/green/2023/03/30/wasteful-luxury-private-jet-pollution-more-than-doubles-in-europe>.
+
+Others are using the OpenSky API to model the amount of carbon being released
+by the aviation industry, while others have used this public data to predict
+corporate mergers and acquisitions. There are a wealth of reasons why this
+data is useful, but not all of those reasons are good. Be good.
