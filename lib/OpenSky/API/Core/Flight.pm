@@ -4,7 +4,8 @@ package OpenSky::API::Core::Flight;
 
 our $VERSION = '0.001';
 
-use OpenSky::API::Moose;
+use Moose;
+use experimental qw(signatures);
 
 sub _get_params ($class) {
     return qw(
@@ -22,7 +23,9 @@ sub _get_params ($class) {
       arrivalAirportCandidatesCount
     );
 }
-param [ __PACKAGE__->_get_params() ] => ( required => 1 );
+has [ __PACKAGE__->_get_params() ] => ( is => 'ro', required => 1 );
+
+__PACKAGE__->meta->make_immutable;
 
 =head1 DESCRIPTION
 

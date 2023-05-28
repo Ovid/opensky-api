@@ -3,51 +3,54 @@
 package OpenSky::API::Utils::Iterator;
 
 our $VERSION = '0.001';
-use OpenSky::API::Moose types => [
-    qw(
-      ArrayRef
-      Defined
-      InstanceOf
-      PositiveOrZeroInt
-    )
-];
+use Moose;
+use OpenSky::API::Types qw(
+  ArrayRef
+  Defined
+  InstanceOf
+  PositiveOrZeroInt
+);
+use experimental qw(signatures);
 
-param '_rows' => (
+has '_rows' => (
+    is       => 'ro',
     isa      => ArrayRef [Defined],
     init_arg => 'rows',
 );
 
-field '_index' => (
+has '_index' => (
     is      => 'rw',
     writer  => '_set_index',
     isa     => PositiveOrZeroInt,
     default => 0,
 );
 
-method first() {
+sub first ($self) {
     return $self->_rows->[0];
 }
 
-method next() {
+sub next ($self) {
     my $i    = $self->_index;
     my $next = $self->_rows->[$i] or return;
     $self->_set_index( $i + 1 );
     return $next;
 }
 
-method reset() {
+sub reset ($self) {
     $self->set_index(0);
     return 1;
 }
 
-method all() {
+sub all ($self) {
     return @{ $self->_rows };
 }
 
-method count() {
+sub count ($self) {
     my @all = $self->all;
     return scalar @all;
 }
+
+__PACKAGE__->meta->make_immutable;
 
 __END__
 

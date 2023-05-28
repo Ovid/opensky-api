@@ -4,8 +4,8 @@ use lib 'lib', 't/lib';
 use Test::Most;
 use OpenSky::API::Test qw( set_response );
 
-my $raw     = OpenSky::API->new( raw => 1 );
-my $objects = OpenSky::API->new();
+my $raw     = OpenSky::API->new( raw     => 1, testing => 1 );
+my $objects = OpenSky::API->new( testing => 1 );
 
 my %params = (
     extended => 1,
