@@ -7,7 +7,6 @@ requires "Mojo::JSON" => "0";
 requires "Mojo::URL" => "0";
 requires "Mojo::UserAgent" => "0";
 requires "Moose" => "0";
-requires "MooseX::Extended::Role" => "0";
 requires "PerlX::Maybe" => "0";
 requires "Type::Library" => "0";
 requires "Type::Params" => "0";
