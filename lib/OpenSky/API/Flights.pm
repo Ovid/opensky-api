@@ -46,4 +46,4 @@ As a convenience, the following methods are delegated to the iterator:
 
 =item * count
 
-
+=back
