@@ -3,21 +3,7 @@
 package OpenSky::API::Core::StateVector;
 
 our $VERSION = '0.001';
-use OpenSky::API::Moose types => [
-    qw(
-      Dict
-      HashRef
-      InstanceOf
-      NonEmptyStr
-      Num
-      Optional
-    )
-];
-use OpenSky::API::Types qw(
-  Longitude
-  Latitude
-);
-use PerlX::Maybe;
+use OpenSky::API::Moose;
 
 my @PARAMS = qw(
   icao24
@@ -40,13 +26,13 @@ my @PARAMS = qw(
   category
 );
 
+param [@PARAMS] => ( required => 1 );
+
 around 'BUILDARGS' => sub ( $orig, $class, $state ) {
     my %value_for;
     @value_for{@PARAMS} = @$state;
     return $class->$orig(%value_for);
 };
-
-param [@PARAMS] => ( required => 1 );
 
 method category_name() {
     my $category = $self->category // 0;

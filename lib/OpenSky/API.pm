@@ -19,6 +19,7 @@ use OpenSky::API::Moose types => [
     )
 ];
 use OpenSky::API::States;
+use OpenSky::API::Flights;
 use OpenSky::API::Types qw(
   Longitude
   Latitude
@@ -34,6 +35,11 @@ use Type::Params -sigs;
 param config => (
     isa     => NonEmptyStr,
     default => sub { $ENV{HOME} . '/.openskyrc' },
+);
+
+param [qw/debug raw testing/] => (
+    isa     => Bool,
+    default => 0,
 );
 
 field _config_data => (
@@ -66,6 +72,7 @@ field limit_remaining => (
     isa     => Int,
     writer  => '_set_limit_remaining',
     default => sub ($self) {
+        return 4000 if $self->testing;
 
         # per their documentation,
         # https://openskynetwork.github.io/opensky-api/rest.html#api-credit-usage,
@@ -111,8 +118,12 @@ method get_states( $seconds, $icao24, $bbox, $extended ) {
         $params{$_} = $bbox->{$_} for qw( lamin lomin lamax lomax );
     }
 
-    my $route = '/states/all';
-    return OpenSky::API::States->new( $self->_get_response( route => $route, params => \%params ) );
+    my $route    = '/states/all';
+    my $response = $self->_get_response( route => $route, params => \%params ) or return;
+    if ( $self->raw ) {
+        return $response;
+    }
+    return OpenSky::API::States->new($response);
 }
 
 signature_for get_my_states => (
@@ -134,7 +145,29 @@ method get_my_states( $seconds, $icao24, $serials ) {
     );
 
     my $route = '/states/own';
-    return OpenSky::API::States->new( $self->_get_response( route => $route, params => \%params ) );
+    my $response = $self->_get_response( route => $route, params => \%params );
+    if ( $self->raw ) {
+        return $response;
+    }
+    return OpenSky::API::States->new($response);
+}
+
+method get_flights_from_interval( $begin, $end ) {
+    if ( $begin >= $end ) {
+        croak 'The end time must be greater than or equal to the start time.';
+    }
+    if ( ($end - $begin) > 7200 ) {
+        croak 'The time interval must be smaller than two hours.';
+    }
+
+    my %params   = ( begin => $begin, end => $end );
+    my $route    = '/flights/all';
+    my $response = $self->_get_response( route => $route, params => \%params ) // [];
+
+    if ( $self->raw ) {
+        return $response;
+    }
+    return OpenSky::API::Flights->new($response);
 }
 
 signature_for _get_response => (
@@ -147,19 +180,42 @@ signature_for _get_response => (
     named_to_list => 1,
 );
 
+# an easy target to override
+method _GET ($url) {
+    return $self->_ua->get($url)->res;
+}
+
 method _get_response( $route, $params, $credits ) {
     my $url       = $self->_url( $route, $params );
-    my $response  = $self->_ua->get($url)->res;
+    my $response  = $self->_GET($url);
     my $remaining = $response->headers->header('X-Rate-Limit-Remaining');
+
+    $self->_debug("GET $url\n");
+    $self->_debug( ref($response) . "\n" );
+    $self->_debug( $response->headers->to_string . "\n" );
 
     # not all requests cost credits, so we only want to set the limit if
     # $remaining is defined
     $self->_set_limit_remaining($remaining) if !$credits && defined $remaining;
     if ( !$response->is_success ) {
-        croak $response->message;
+        if ( $response->code == 404 ) {
+
+            # this is annoying. If the didn't match any criteria, return a 200
+            # and and empty element. Instead, we get a 404.
+            return;
+        }
+        croak $response->to_string;
     }
-    my %temp = decode_json( $response->body )->%*;
-    return $credits ? $remaining : decode_json( $response->body );
+    return $remaining if $credits;
+    if ( $self->raw ) {
+        $self->_debug( $response->body );
+    }
+    return decode_json( $response->body );
+}
+
+method _debug ($msg) {
+    return !$self->debug;
+    say STDERR $msg;
 }
 
 method _url( $url, $params = {} ) {

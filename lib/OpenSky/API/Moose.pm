@@ -4,7 +4,6 @@ package OpenSky::API::Moose;
 
 our $VERSION = '0.001';
 use MooseX::Extended::Custom;
-use PerlX::Maybe 'provided';
 
 # If $^P is true, we're running under the debugger.
 #
@@ -14,10 +13,25 @@ use PerlX::Maybe 'provided';
 # causes the code to die.
 sub import {
     my ( $class, %args ) = @_;
+
+    # we exclude strictconstructor because, otherwise, the delayed param trick
+    # for OpenSky::API::Core will fail.
+    my @excludes = 'StrictConstructor';
+    if ($^P) {
+        state $warned;
+        unless ($warned) {
+            $warned++;
+            say STDERR "Running under the debugger. Excluding make_immutable\n";
+        }
+    }
+    else {
+        push @excludes => 'immutable';
+    }
+    push @excludes => 'immutable' unless $^P;
     MooseX::Extended::Custom->create(
-        includes     => [ 'method', 'try' ],
-        provided $^P => excludes => ['immutable'],    # don't use immutable under the debugger
-        %args                                         # you need this to allow customization of your customization
+        includes => [ 'method', 'try' ],
+        excludes => \@excludes,
+        %args    # you need this to allow customization of your customization
     );
 }
 

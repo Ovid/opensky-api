@@ -19,7 +19,7 @@ param '_rows' => (
 
 field '_index' => (
     is      => 'rw',
-    writer  => 1,
+    writer  => '_set_index',
     isa     => PositiveOrZeroInt,
     default => 0,
 );
