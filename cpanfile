@@ -21,6 +21,7 @@ on 'test' => sub {
   requires "Exporter" => "0";
   requires "ExtUtils::MakeMaker" => "0";
   requires "File::Spec" => "0";
+  requires "Test2::Plugin::BailOnFail" => "0";
   requires "Test::More" => "0";
   requires "Test::Most" => "0";
   requires "Test::PerlTidy" => "0";
