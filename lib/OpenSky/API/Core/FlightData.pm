@@ -4,7 +4,7 @@ package OpenSky::API::Core::FlightData;
 
 our $VERSION = '0.001';
 
-use OpenSky::API::Moose;
+use Moose;
 extends 'OpenSky::API::Core';
 
 sub _get_params ($class) {

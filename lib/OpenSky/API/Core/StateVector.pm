@@ -3,7 +3,8 @@
 package OpenSky::API::Core::StateVector;
 
 our $VERSION = '0.001';
-use OpenSky::API::Moose;
+use Moose;
+use experimental qw(signatures);
 
 my @PARAMS = qw(
   icao24
@@ -26,7 +27,7 @@ my @PARAMS = qw(
   category
 );
 
-param [@PARAMS] => ( required => 1 );
+has [@PARAMS] => ( is => 'ro', required => 1 );
 
 around 'BUILDARGS' => sub ( $orig, $class, $state ) {
     my %value_for;
@@ -38,7 +39,7 @@ sub _get_params ($class) {
     return @PARAMS;
 }
 
-method category_name() {
+sub category_name ($self) {
     my $category = $self->category // 0;
     $category = 0 if $category > 20;
     return '' unless $category;
@@ -68,7 +69,7 @@ method category_name() {
     return $names[$category];
 }
 
-method position_source_name() {
+sub position_source_name ($self) {
     my $source  = $self->position_source // return 'Uknown';
     my @sources = (
         'ADS-B',
@@ -78,6 +79,8 @@ method position_source_name() {
     );
     return $sources[$source];
 }
+
+__PACKAGE__->meta->make_immutable;
 
 __END__
 

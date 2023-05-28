@@ -1,22 +1,21 @@
-# A class representing a states response from the OpenSky Network API
+# ,A class representing a states response from the OpenSky Network API
 
 package OpenSky::API::States;
 
 our $VERSION = '0.001';
-use OpenSky::API::Moose types => [
-    qw(
-      InstanceOf
-      PositiveOrZeroInt
-    )
-];
+use Moose;
+use OpenSky::API::Types qw(
+  InstanceOf
+  PositiveOrZeroInt
+);
 use OpenSky::API::Core::StateVector;
 use OpenSky::API::Utils::Iterator;
+use experimental qw(signatures);
 
-param time    => ( isa => PositiveOrZeroInt );
-param vectors => ( isa => InstanceOf ['OpenSky::API::Utils::Iterator'] );
+has time    => ( is => 'ro', isa => PositiveOrZeroInt );
+has vectors => ( is => 'ro', isa => InstanceOf ['OpenSky::API::Utils::Iterator'] );
 
 around 'BUILDARGS' => sub ( $orig, $class, $response ) {
-
     my $states = $response->{states};
     my $time   = $response->{time};
 
@@ -25,6 +24,8 @@ around 'BUILDARGS' => sub ( $orig, $class, $response ) {
 
     return $class->$orig( vectors => $iterator, time => $time );
 };
+
+__PACKAGE__->meta->make_immutable;
 
 =head1 METHODS
 
