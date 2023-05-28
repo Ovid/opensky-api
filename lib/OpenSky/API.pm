@@ -190,6 +190,24 @@ sub get_flights_from_interval ( $self, $begin, $end ) {
     return OpenSky::API::Flights->new($response);
 }
 
+sub get_flights_by_aircraft ( $self, $icao24, $begin, $end ) {
+    if ( $begin >= $end ) {
+        croak 'The end time must be greater than or equal to the start time.';
+    }
+    if ( ( $end - $begin ) > 2592 * 1e3 ) {
+        croak 'The time interval must be smaller than 30 days.';
+    }
+
+    my %params   = ( icao24 => $icao24, begin => $begin, end => $end );
+    my $route    = '/flights/aircraft';
+    my $response = $self->_get_response( route => $route, params => \%params ) // [];
+
+    if ( $self->raw ) {
+        return $response;
+    }
+    return OpenSky::API::Flights->new($response);
+}
+
 signature_for _get_response => (
     method => 1,
     named  => [
