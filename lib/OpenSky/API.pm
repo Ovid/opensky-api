@@ -226,6 +226,24 @@ sub get_arrivals_by_airport ( $self, $airport, $begin, $end ) {
     return OpenSky::API::Flights->new($response);
 }
 
+sub get_departures_by_airport ( $self, $airport, $begin, $end ) {
+    if ( $begin >= $end ) {
+        croak 'The end time must be greater than or equal to the start time.';
+    }
+    if ( ( $end - $begin ) > 604800 ) {
+        croak 'The time interval must be smaller than 7 days.';
+    }
+
+    my %params   = ( airport => $airport, begin => $begin, end => $end );
+    my $route    = '/flights/departure';
+    my $response = $self->_get_response( route => $route, params => \%params ) // [];
+
+    if ( $self->raw ) {
+        return $response;
+    }
+    return OpenSky::API::Flights->new($response);
+}
+
 signature_for _get_response => (
     method => 1,
     named  => [
