@@ -5,71 +5,88 @@ package OpenSky::API;
 # ABSTRACT: Perl interface to the OpenSky Network API
 
 our $VERSION = '0.001';
-use OpenSky::API::Moose types => [
-    qw(
-      ArrayRef
-      Bool
-      Dict
-      HashRef
-      InstanceOf
-      Int
-      NonEmptyStr
-      Num
-      Optional
-    )
-];
+use Moose;
+use OpenSky::API::Types qw(
+  ArrayRef
+  Bool
+  Dict
+  HashRef
+  InstanceOf
+  Int
+  Latitude
+  Longitude
+  NonEmptyStr
+  Num
+  Optional
+);
 use OpenSky::API::States;
 use OpenSky::API::Flights;
-use OpenSky::API::Types qw(
-  Longitude
-  Latitude
-);
 use PerlX::Maybe;
 use Config::INI::Reader;
+use Carp qw( croak );
 
 use Mojo::UserAgent;
 use Mojo::URL;
 use Mojo::JSON qw( decode_json );
 use Type::Params -sigs;
+use experimental qw( signatures );
 
-param config => (
+has config => (
+    is      => 'ro',
     isa     => NonEmptyStr,
-    default => sub { $ENV{HOME} . '/.openskyrc' },
+    default => sub ($self) { $ENV{HOME} . '/.openskyrc' },
 );
 
-param [qw/debug raw testing/] => (
+has [qw/debug raw testing/] => (
+    is      => 'ro',
     isa     => Bool,
     default => 0,
 );
 
-field _config_data => (
+has _config_data => (
+    is       => 'ro',
     isa      => HashRef,
-    required => 1,
-    default  => sub { Config::INI::Reader->read_file( $_[0]->config ) },
+    init_arg => undef,
+    lazy     => 1,
+    default  => sub ($self) {
+        Config::INI::Reader->read_file( $self->config );
+    },
 );
 
-field _ua => (
-    isa     => InstanceOf ['Mojo::UserAgent'],
-    default => sub { Mojo::UserAgent->new },
+has _ua => (
+    is       => 'ro',
+    isa      => InstanceOf ['Mojo::UserAgent'],
+    init_arg => undef,
+    default  => sub { Mojo::UserAgent->new },
 );
 
-field _username => (
-    isa     => NonEmptyStr,
-    default => sub ($self) { $ENV{OPENSKY_USERNAME} // $self->_config_data->{opensky}{username} },
+has _username => (
+    is       => 'ro',
+    isa      => NonEmptyStr,
+    lazy     => 1,
+    init_arg => 'username',
+    default  => sub ($self) { $ENV{OPENSKY_USERNAME} // $self->_config_data->{opensky}{username} },
 );
 
-field _password => (
-    isa     => NonEmptyStr,
-    default => sub ($self) { $ENV{OPENSKY_PASSWORD} // $self->_config_data->{opensky}{password} },
+has _password => (
+    is       => 'ro',
+    isa      => NonEmptyStr,
+    lazy     => 1,
+    init_arg => 'password',
+    default  => sub ($self) { $ENV{OPENSKY_PASSWORD} // $self->_config_data->{opensky}{password} },
 );
 
-field _base_url => (
-    isa     => NonEmptyStr,
-    default => sub ($self) { $self->_config_data->{_}{base_url} },
+has _base_url => (
+    is       => 'ro',
+    init_arg => 'base_url',
+    isa      => NonEmptyStr,
+    default  => sub ($self) {'https://opensky-network.org/api'},
 );
 
-field limit_remaining => (
+has limit_remaining => (
+    is      => 'ro',
     isa     => Int,
+    lazy    => 1,
     writer  => '_set_limit_remaining',
     default => sub ($self) {
         return 4000 if $self->testing;
@@ -108,7 +125,7 @@ signature_for get_states => (
     named_to_list => 1,
 );
 
-method get_states( $seconds, $icao24, $bbox, $extended ) {
+sub get_states ( $self, $seconds, $icao24, $bbox, $extended ) {
     my %params = (
         maybe time     => $seconds,
         maybe icao24   => $icao24,
@@ -120,7 +137,7 @@ method get_states( $seconds, $icao24, $bbox, $extended ) {
 
     my $route    = '/states/all';
     my $response = $self->_get_response( route => $route, params => \%params ) // {
-        time   => time - ($seconds // 0),
+        time   => time - ( $seconds // 0 ),
         states => [],
     };
     if ( $self->raw ) {
@@ -139,7 +156,7 @@ signature_for get_my_states => (
     named_to_list => 1,
 );
 
-method get_my_states( $seconds, $icao24, $serials ) {
+sub get_my_states ( $self, $seconds, $icao24, $serials ) {
     my %params = (
         extended      => 1,
         maybe time    => $seconds,
@@ -147,7 +164,7 @@ method get_my_states( $seconds, $icao24, $serials ) {
         maybe serials => $serials,
     );
 
-    my $route = '/states/own';
+    my $route    = '/states/own';
     my $response = $self->_get_response( route => $route, params => \%params );
     if ( $self->raw ) {
         return $response;
@@ -155,11 +172,11 @@ method get_my_states( $seconds, $icao24, $serials ) {
     return OpenSky::API::States->new($response);
 }
 
-method get_flights_from_interval( $begin, $end ) {
+sub get_flights_from_interval ( $self, $begin, $end ) {
     if ( $begin >= $end ) {
         croak 'The end time must be greater than or equal to the start time.';
     }
-    if ( ($end - $begin) > 7200 ) {
+    if ( ( $end - $begin ) > 7200 ) {
         croak 'The time interval must be smaller than two hours.';
     }
 
@@ -184,11 +201,11 @@ signature_for _get_response => (
 );
 
 # an easy target to override
-method _GET ($url) {
+sub _GET ( $self, $url ) {
     return $self->_ua->get($url)->res;
 }
 
-method _get_response( $route, $params, $credits ) {
+sub _get_response ( $self, $route, $params, $credits ) {
     my $url       = $self->_url( $route, $params );
     my $response  = $self->_GET($url);
     my $remaining = $response->headers->header('X-Rate-Limit-Remaining');
@@ -215,13 +232,15 @@ method _get_response( $route, $params, $credits ) {
     return decode_json( $response->body );
 }
 
-method _debug ($msg) {
+sub _debug ( $self, $msg ) {
     return if !$self->debug;
     say STDERR $msg;
 }
 
-method _url( $url, $params = {} ) {
+sub _url ( $self, $url, $params = {} ) {
     $url = Mojo::URL->new( $self->_base_url . $url )->userinfo( $self->_username . ':' . $self->_password );
     $url->query($params);
     return $url;
 }
+
+__PACKAGE__->meta->make_immutable;
