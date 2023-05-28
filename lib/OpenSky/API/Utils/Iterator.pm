@@ -2,7 +2,7 @@
 
 package OpenSky::API::Utils::Iterator;
 
-our $VERSION = '0.002';
+our $VERSION = '0.003';
 use Moose;
 use OpenSky::API::Types qw(
   ArrayRef

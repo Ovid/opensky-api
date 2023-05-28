@@ -2,7 +2,7 @@
 
 package OpenSky::API::Core::StateVector;
 
-our $VERSION = '0.002';
+our $VERSION = '0.003';
 use Moose;
 use experimental qw(signatures);
 extends 'OpenSky::API::Core';
