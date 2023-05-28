@@ -10,6 +10,7 @@ use OpenSky::API::Types qw(
   Str
   Undef
 );
+our $VERSION = '0.001';
 use experimental qw(signatures);
 
 around 'BUILDARGS' => sub ( $orig, $class, $state ) {
