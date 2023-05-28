@@ -4,7 +4,7 @@ OpenSky::API - Perl interface to the OpenSky Network API
 
 # VERSION
 
-version 0.001
+version 0.002
 
 # SYNOPSIS
 
@@ -259,9 +259,9 @@ airspace. Its main function is to collect, process and store air traffic
 control data and provide open access to this data to the public. Similar
 to many existing flight trackers such as Flightradar24 and FlightAware,
 the OpenSky Network consists of a multitude of sensors (currently around
-1000,[2] mostly concentrated in Europe and the US), which are connected to
+1000, mostly concentrated in Europe and the US), which are connected to
 the Internet by volunteers, industrial supporters, academic, and
-governmental organizations.[3] All collected raw data is archived in a
+governmental organizations. All collected raw data is archived in a
 large historical database, containing over 23 trillion air traffic control
 messages (November 2020). The database is primarily used by researchers
 from different areas to analyze and improve air traffic control
@@ -278,15 +278,15 @@ following code ...
 ```perl
 use OpenSky::API;
 
-my $musks_jets = 'a835af';
-my $openapi    = OpenSky::API->new;
+my $musks_jet = 'a835af';
+my $openapi   = OpenSky::API->new;
 
 my $days = 7;
 my $now  = time;
 my $then = $now - 86400 * 7;    # up to 7 days ago
 
 my $flight_data = $openapi->get_flights_by_aircraft( $musks_jet, $then, $now );
-say "Jet $jet has " . $flight_data->count . " flights";
+say "Jet $musks_jet has " . $flight_data->count . " flights";
 ```
 
 As of this writing, that prints out:
@@ -307,6 +307,12 @@ Others are using the OpenSky API to model the amount of carbon being released
 by the aviation industry, while others have used this public data to predict
 corporate mergers and acquisitions. There are a wealth of reasons why this
 data is useful, but not all of those reasons are good. Be good.
+
+# TODO
+
+- Implement rate limits
+- Add a `is_rate_limited` method to results
+- Add Waypoints and Flight Routes
 
 # AUTHOR
 
