@@ -51,7 +51,7 @@ my $open_sky = OpenSky::API->new(
 );
 ```
 
-Alterantively, you can set the `OPENSKY_USERNAME` and `OPENSKY_PASSWORD`
+Alternatively, you can set the `OPENSKY_USERNAME` and `OPENSKY_PASSWORD`
 environment variables, or create a `.openskyrc` file in your home directory
 with the following contents:
 

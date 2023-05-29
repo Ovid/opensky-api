@@ -347,7 +347,7 @@ If you want to use the other methods, you will need to provide a username and pa
         password => 'password',
     );
 
-Alterantively, you can set the C<OPENSKY_USERNAME> and C<OPENSKY_PASSWORD>
+Alternatively, you can set the C<OPENSKY_USERNAME> and C<OPENSKY_PASSWORD>
 environment variables, or create a C<.openskyrc> file in your home directory
 with the following contents:
 
