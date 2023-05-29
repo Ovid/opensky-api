@@ -4,7 +4,7 @@ package OpenSky::API;
 
 # ABSTRACT: Perl interface to the OpenSky Network API
 
-our $VERSION = '0.004';
+our $VERSION = '0.005';
 use Moose;
 use OpenSky::API::Types qw(
   ArrayRef
