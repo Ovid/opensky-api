@@ -4,7 +4,7 @@ OpenSky::API - Perl interface to the OpenSky Network API
 
 # VERSION
 
-version 0.002
+version 0.003
 
 # SYNOPSIS
 
