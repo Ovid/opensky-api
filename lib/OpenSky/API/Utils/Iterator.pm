@@ -37,7 +37,7 @@ sub next ($self) {
 }
 
 sub reset ($self) {
-    $self->set_index(0);
+    $self->_set_index(0);
     return 1;
 }
 
