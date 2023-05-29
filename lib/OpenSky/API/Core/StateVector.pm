@@ -5,7 +5,6 @@ package OpenSky::API::Core::StateVector;
 our $VERSION = '0.003';
 use Moose;
 use experimental qw(signatures);
-extends 'OpenSky::API::Core';
 
 my @PARAMS = qw(
   icao24
@@ -27,6 +26,12 @@ my @PARAMS = qw(
   position_source
   category
 );
+
+around 'BUILDARGS' => sub ( $orig, $class, $state ) {
+    my %value_for;
+    @value_for{ $class->_get_params } = @$state;
+    return $class->$orig(%value_for);
+};
 
 has [@PARAMS] => ( is => 'ro', required => 1 );
 

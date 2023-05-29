@@ -347,6 +347,9 @@ If you want to use the other methods, you will need to provide a username and pa
         password => 'password',
     );
 
+You can get a username and password by registering for a free account on
+L<OpenSky Network|https://opensky-network.org>.
+
 Alternatively, you can set the C<OPENSKY_USERNAME> and C<OPENSKY_PASSWORD>
 environment variables, or create a C<.openskyrc> file in your home directory
 with the following contents:
@@ -368,7 +371,8 @@ attribute in the constructor:
         raw => 1,
     );
 
-If you are debugging why something failed, pass the C<debug> attribute:
+If you are debugging why something failed, pass the C<debug> attribute to see
+a C<STDERR> trace of the requests and responses:
 
     my $open_sky = OpenSky::API->new(
         debug => 1,
@@ -539,6 +543,15 @@ The first argument is the ICAO24 transponder address of the aircraft you want.
 
 Returns an instance of L<OpenSky::API::Flights>. if C<< raw => 1 >> was passed
 to the constructor, you will get the raw data structure instead.
+
+=head2 C<limit_remaining>
+
+    my $limit = $api->limit_remaining;
+
+The methods to retrieve state vectors of sensors other than your own are rate
+limited. As of this writing, this is only C<get_states>. See
+L<limitations|https://openskynetwork.github.io/opensky-api/rest.html#limitations>
+for more details.
 
 =head1 EXAMPLES
 
