@@ -355,6 +355,12 @@ with the following contents:
     username = myusername
     password = s3cr3t
 
+If you'd like that file in another directory, just pass the C<config> argument:
+
+    my $open_sky = OpenSky::API->new(
+        config => '/path/to/config',
+    );
+
 By default, all methods return objects. If you want to get the raw results, you can set the C<raw>
 attribute in the constructor:
 
@@ -372,6 +378,12 @@ If you are debugging why something failed, pass the C<debug> attribute:
 
 For more insight to all methods, see L<the OpenSky API
 documentation|https://openskynetwork.github.io/opensky-api/>.
+
+Note a key difference between the Python implementation and this one: the
+Python implementation returns <None> if results are not found. For this
+module, you will still receive the iterator, but it won't have any results.
+This allows you to keep a consistent interface without having to check for
+C<undef> everywhere.
 
 =head2 get_states
 
