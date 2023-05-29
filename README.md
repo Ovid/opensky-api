@@ -51,6 +51,9 @@ my $open_sky = OpenSky::API->new(
 );
 ```
 
+You can get a username and password by registering for a free account on
+[OpenSky Network](https://opensky-network.org).
+
 Alternatively, you can set the `OPENSKY_USERNAME` and `OPENSKY_PASSWORD`
 environment variables, or create a `.openskyrc` file in your home directory
 with the following contents:
@@ -59,6 +62,14 @@ with the following contents:
 [opensky]
 username = myusername
 password = s3cr3t
+```
+
+If you'd like that file in another directory, just pass the `config` argument:
+
+```perl
+my $open_sky = OpenSky::API->new(
+    config => '/path/to/config',
+);
 ```
 
 By default, all methods return objects. If you want to get the raw results, you can set the `raw`
@@ -70,7 +81,8 @@ my $open_sky = OpenSky::API->new(
 );
 ```
 
-If you are debugging why something failed, pass the `debug` attribute:
+If you are debugging why something failed, pass the `debug` attribute to see
+a `STDERR` trace of the requests and responses:
 
 ```perl
 my $open_sky = OpenSky::API->new(
@@ -82,6 +94,12 @@ my $open_sky = OpenSky::API->new(
 
 For more insight to all methods, see [the OpenSky API
 documentation](https://openskynetwork.github.io/opensky-api/).
+
+Note a key difference between the Python implementation and this one: the
+Python implementation returns <None> if results are not found. For this
+module, you will still receive the iterator, but it won't have any results.
+This allows you to keep a consistent interface without having to check for
+`undef` everywhere.
 
 ## get\_states
 
@@ -245,6 +263,17 @@ my $flights = $api->get_flights_from_interval($start, $end);
 
 Returns an instance of [OpenSky::API::Flights](https://metacpan.org/pod/OpenSky%3A%3AAPI%3A%3AFlights). if `raw => 1` was passed
 to the constructor, you will get the raw data structure instead.
+
+## `limit_remaining`
+
+```perl
+my $limit = $api->limit_remaining;
+```
+
+The methods to retrieve state vectors of sensors other than your own are rate
+limited. As of this writing, this is only `get_states`. See
+[limitations](https://openskynetwork.github.io/opensky-api/rest.html#limitations)
+for more details.
 
 # EXAMPLES
 
