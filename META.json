@@ -45,7 +45,6 @@
          "requires" : {
             "Carp" : "0",
             "Config::INI::Reader" : "0",
-            "Function::Parameters" : "2.002003",
             "Mojo::JSON" : "0",
             "Mojo::URL" : "0",
             "Mojo::UserAgent" : "0",
@@ -82,35 +81,31 @@
    "provides" : {
       "OpenSky::API" : {
          "file" : "lib/OpenSky/API.pm",
-         "version" : "0.002"
-      },
-      "OpenSky::API::Core" : {
-         "file" : "lib/OpenSky/API/Core.pm",
-         "version" : "0.002"
+         "version" : "0.003"
       },
       "OpenSky::API::Core::Flight" : {
          "file" : "lib/OpenSky/API/Core/Flight.pm",
-         "version" : "0.002"
+         "version" : "0.003"
       },
       "OpenSky::API::Core::StateVector" : {
          "file" : "lib/OpenSky/API/Core/StateVector.pm",
-         "version" : "0.002"
+         "version" : "0.003"
       },
       "OpenSky::API::Flights" : {
          "file" : "lib/OpenSky/API/Flights.pm",
-         "version" : "0.002"
+         "version" : "0.003"
       },
       "OpenSky::API::States" : {
          "file" : "lib/OpenSky/API/States.pm",
-         "version" : "0.002"
+         "version" : "0.003"
       },
       "OpenSky::API::Types" : {
          "file" : "lib/OpenSky/API/Types.pm",
-         "version" : "0.002"
+         "version" : "0.003"
       },
       "OpenSky::API::Utils::Iterator" : {
          "file" : "lib/OpenSky/API/Utils/Iterator.pm",
-         "version" : "0.002"
+         "version" : "0.003"
       }
    },
    "release_status" : "stable",
@@ -125,7 +120,7 @@
          "web" : "https://github.com/Ovid/opensky-api"
       }
    },
-   "version" : "0.002",
+   "version" : "0.003",
    "x_contributors" : [
       "Ovid <ovid@cpan.org>"
    ],
