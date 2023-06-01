@@ -1,6 +1,6 @@
 # ABSTRACT: A class representing a state from the OpenSky Network API
 
-package OpenSky::API::Core::StateVector;
+package WebService::OpenSky::Core::StateVector;
 
 our $VERSION = '0.005';
 use Moose;

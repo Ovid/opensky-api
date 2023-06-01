@@ -8,7 +8,7 @@ use OpenSky::API::Types qw(
   InstanceOf
   PositiveOrZeroInt
 );
-use OpenSky::API::Core::StateVector;
+use WebService::OpenSky::Core::StateVector;
 use OpenSky::API::Utils::Iterator;
 use experimental qw(signatures);
 
@@ -23,7 +23,7 @@ around 'BUILDARGS' => sub ( $orig, $class, $response ) {
     my $states = $response->{states};
     my $time   = $response->{time};
 
-    my @state_vectors = map { OpenSky::API::Core::StateVector->new($_) } @$states;
+    my @state_vectors = map { WebService::OpenSky::Core::StateVector->new($_) } @$states;
     my $iterator      = OpenSky::API::Utils::Iterator->new( rows => \@state_vectors );
 
     return $class->$orig( vectors => $iterator, time => $time );
@@ -40,7 +40,7 @@ vectors represent the state of a vehicle with the interval C<[time=1, time]>.
 
 =head2 vectors
 
-Returns an iterator of L<OpenSky::API::Core::StateVector> objects.
+Returns an iterator of L<WebService::OpenSky::Core::StateVector> objects.
 
 As a convenience, the following methods are delegated to the iterator:
 

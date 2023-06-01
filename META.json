@@ -87,7 +87,7 @@
          "file" : "lib/OpenSky/API/Core/Flight.pm",
          "version" : "0.004"
       },
-      "OpenSky::API::Core::StateVector" : {
+      "WebService::OpenSky::Core::StateVector" : {
          "file" : "lib/OpenSky/API/Core/StateVector.pm",
          "version" : "0.004"
       },
