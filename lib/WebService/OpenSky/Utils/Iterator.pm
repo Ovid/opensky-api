@@ -2,7 +2,7 @@
 
 package WebService::OpenSky::Utils::Iterator;
 
-our $VERSION = '0.005';
+our $VERSION = '0.006';
 use Moose;
 use WebService::OpenSky::Types qw(
   ArrayRef
