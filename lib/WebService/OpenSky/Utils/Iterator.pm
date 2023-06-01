@@ -1,4 +1,4 @@
-# ABSTARCT: Internal iterator class for WebService::OpenSky
+# ABSTRACT: Internal iterator class for WebService::OpenSky
 
 package WebService::OpenSky::Utils::Iterator;
 

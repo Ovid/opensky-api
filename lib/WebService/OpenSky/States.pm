@@ -1,4 +1,4 @@
-# ,A class representing a states response from the OpenSky Network API
+# ABSTRACT: A class representing a states response from the OpenSky Network API
 
 package WebService::OpenSky::States;
 
