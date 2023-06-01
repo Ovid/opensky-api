@@ -123,7 +123,11 @@ The query used to retrieve this response.
 
 =head2 iterator
 
-Returns an iterator of L<WebService::OpenSky::Core::Flight> objects.
+Returns an iterator of results. See L<WebService::OpenSky> to understand the
+actual response class returned for a given method and which underlying module
+represents the results. (Typically this would be
+L<WebService::OpenSky::Core::Flight> or
+L<WebService::OpenSky::Core::StateVector>.)
 
 As a convenience, the following methods are delegated to the iterator:
 

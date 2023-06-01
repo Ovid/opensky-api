@@ -26,4 +26,4 @@ __END__
 
 This class inherits from L<WebService::OpenSky::Response>. Please see that
 module for the available methods. Individual responses are from the
-L<WesbService::OpenSky::Core::StateVector> class.
+L<WebService::OpenSky::Core::StateVector> class.
