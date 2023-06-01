@@ -360,12 +360,12 @@ If you'd like that file in another directory, just pass the C<config> argument:
         config => '/path/to/config',
     );
 
-By default, all methods return objects. If you want to get the raw results, you can set the C<raw>
-attribute in the constructor:
+All methods return objects. However, we don't inflate the results into objects
+until you ask for the next result. This is to avoid inflating all results if it's expensive.
+In that case, you can ask for the raw results:
 
-    my $open_sky = WebService::OpenSky->new(
-        raw => 1,
-    );
+    my $open_sky = WebService::OpenSky->new->get_states;
+    my $raw = $open_sky->raw_response;
 
 If you are debugging why something failed, pass the C<debug> attribute to see
 a C<STDERR> trace of the requests and responses:
@@ -389,16 +389,16 @@ C<undef> everywhere.
 
     my $states = $api->get_states;
 
-Returns an instance of L<WebService::OpenSky::Response::States>. if C<< raw => 1 >> was passed
-to the constructor, this will be the raw data structure instead.
+Returns an instance of L<WebService::OpenSky::Response::States>.
 
-This API call can be used to retrieve any state vector of the
-OpenSky. Please note that rate limits apply for this call. For API calls
-without rate limitation, see C<get_my_states>.
+This API call can be used to retrieve any state vector of the OpenSky. Please
+note that rate limits apply for this call. For API calls without rate
+limitation, see C<get_my_states>.
 
 By default, the above fetches all current state vectors.
 
-You can (optionally) request state vectors for particular airplanes or times using the following request parameters:
+You can (optionally) request state vectors for particular airplanes or times
+using the following request parameters:
 
     my $states = $api->get_states(
         icao24 => 'abc9f3',
@@ -411,7 +411,9 @@ Both parameters are optional.
 
 =item * C<icao24>
 
-One or more ICAO24 transponder addresses represented by a hex string (e.g. abc9f3). To filter multiple ICAO24 append the property once for each address. If omitted, the state vectors of all aircraft are returned.
+One or more ICAO24 transponder addresses represented by a hex string (e.g.
+abc9f3). To filter multiple ICAO24 append the property once for each address.
+If omitted, the state vectors of all aircraft are returned.
 
 =item * C<time>
 
@@ -456,15 +458,14 @@ Any and all of the above parameters can be combined.
 
     my $states = $api->get_my_states;
 
-Returns an instance of L<WebService::OpenSky::Response::States>. if C<< raw => 1 >> was passed,
-this will be the raw data structure instead.
+Returns an instance of L<WebService::OpenSky::Response::States>.
 
-This API call can be used to retrieve state vectors for your own
-sensors without rate limitations. Note that authentication is required for
-this operation, otherwise you will get a 403 - Forbidden.
+This API call can be used to retrieve state vectors for your own sensors
+without rate limitations. Note that authentication is required for this
+operation, otherwise you will get a 403 - Forbidden.
 
-By default, the above fetches all current state vectors for your states. However, you can also pass
-arguments to fine-tune this:
+By default, the above fetches all current state vectors for your states.
+However, you can also pass arguments to fine-tune this:
 
     my $states = $api->get_my_states(
         time    => 1517258400,
@@ -476,7 +477,8 @@ arguments to fine-tune this:
 
 =item * C<time>
 	
-The time in seconds since epoch (Unix timestamp to retrieve states for. Current time will be used if omitted.
+The time in seconds since epoch (Unix timestamp to retrieve states for.
+Current time will be used if omitted.
 
 =item * <icao24>
 
@@ -497,8 +499,7 @@ given receivers.
 
     my $arrivals = $api->get_arrivals_by_airport('KJFK', $start, $end);
 
-Returns an instance of L<WebService::OpenSky::Response::Flights>. if C<< raw => 1 >> was
-passed, you will get the raw data structure instead.
+Returns an instance of L<WebService::OpenSky::Response::Flights>.
 
 Positional arguments:
 
@@ -528,8 +529,7 @@ Identical to C<get_arrivals_by_airport>, but returns departures instead of arriv
 
     my $flights = $api->get_flights_by_aircraft('abc9f3', $start, $end);
 
-Returns an instance of L<WebService::OpenSky::Response::Flights>. if C<< raw => 1 >> was passed
-to the constructor, you will get the raw data structure instead.
+Returns an instance of L<WebService::OpenSky::Response::Flights>.
 
 The first argument is the ICAO24 transponder address of the aircraft you want.
 
@@ -537,8 +537,7 @@ The first argument is the ICAO24 transponder address of the aircraft you want.
 
     my $flights = $api->get_flights_from_interval($start, $end);
 
-Returns an instance of L<WebService::OpenSky::Response::Flights>. if C<< raw => 1 >> was passed
-to the constructor, you will get the raw data structure instead.
+Returns an instance of L<WebService::OpenSky::Response::Flights>.
 
 =head2 C<limit_remaining>
 
