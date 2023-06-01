@@ -4,19 +4,16 @@ use lib 'lib', 't/lib';
 use Test::Most;
 use WebService::OpenSky::Test qw( set_response );
 
-my $raw     = WebService::OpenSky->new( raw     => 1, testing => 1 );
-my $objects = WebService::OpenSky->new( testing => 1 );
+my $opensky = WebService::OpenSky->new( testing => 1 );
 
 my $now  = time;
 my $then = $now - 3600;
 
 subtest 'Flight data is available' => sub {
     set_response( two_flights() );
-    my $flights_raw = $raw->get_flights_from_interval( $then, $now );
-    set_response( two_flights() );
-    my $flights = $objects->get_flights_from_interval( $then, $now );
+    my $flights     = $opensky->get_flights_from_interval( $then, $now );
+    my $flights_raw = $flights->raw_response;
 
-    is scalar @$flights_raw, 2, 'We should have two flights';
     is $flights->count, 2, 'We should have two flights';
 
     while ( my $flight = $flights->next ) {
@@ -35,22 +32,19 @@ Content-Length: 0
 Date: Sun, 28 May 2023 08:02:21 GMT
 END
     set_response($not_found);
-    my $flights_raw = $raw->get_flights_from_interval( $then, $now );
-    set_response($not_found);
-    my $flights = $objects->get_flights_from_interval( $then, $now );
-    ok !@$flights_raw,                    'We should have no flights for raw data';
+    my $flights = $opensky->get_flights_from_interval( $then, $now );
     ok !$flights->count, 'We should have no flights for objects';
 };
 
 subtest 'Bad time intervals' => sub {
     my $then = $now + 3600;
     set_response( two_flights() );
-    throws_ok { $raw->get_flights_from_interval( $then, $now ) }
+    throws_ok { $opensky->get_flights_from_interval( $then, $now ) }
     qr/The end time must be greater than or equal to the start time/, 'The earlier time must be earlier than the later time';
 
     $then = $now - 10_000;
     set_response( two_flights() );
-    throws_ok { $raw->get_flights_from_interval( $then, $now ) }
+    throws_ok { $opensky->get_flights_from_interval( $then, $now ) }
     qr/The time interval must be smaller than two hours/, 'The time interval must be smaller than two hours';
 };
 

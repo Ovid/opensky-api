@@ -4,46 +4,27 @@ package WebService::OpenSky::Flights;
 
 our $VERSION = '0.005';
 use Moose;
-use WebService::OpenSky::Types qw(InstanceOf);
 use WebService::OpenSky::Core::Flight;
 use WebService::OpenSky::Utils::Iterator;
 use experimental qw(signatures);
+extends 'WebService::OpenSky::Response';
 
-has flights => (
-    is      => 'ro',
-    isa     => InstanceOf ['WebService::OpenSky::Utils::Iterator'],
-    handles => [qw(first next reset all count)],
-);
+sub _create_response_iterator ($self) {
+    my @responses = map { WebService::OpenSky::Core::Flight->new($_) } $self->raw_response->@*;
+    return WebService::OpenSky::Utils::Iterator->new( rows => \@responses );
+}
 
-around 'BUILDARGS' => sub ( $orig, $class, $response ) {
-    my @flights  = map { WebService::OpenSky::Core::Flight->new($_) } $response->@*;
-    my $iterator = WebService::OpenSky::Utils::Iterator->new( rows => \@flights );
-
-    return $class->$orig( flights => $iterator );
-};
+# trusted method only called by WebService::OpenSky
+sub _empty_response ($self) {
+    return [];
+}
 
 __PACKAGE__->meta->make_immutable;
 
 __END__
 
-=head1 METHODS
+=head1 DESCRIPTION
 
-=head2 flights
-
-Returns an iterator of L<WebService::OpenSky::Core::Flight> objects.
-
-As a convenience, the following methods are delegated to the iterator:
-
-=over 4
-
-=item * first
-
-=item * next
-
-=item * reset
-
-=item * all
-
-=item * count
-
-=back
+This class inherits from L<WebService::OpenSky::Response>. Please see that
+module for the available methods. Individual responses are from the
+L<WesbService::OpenSky::Core::Flight> class.

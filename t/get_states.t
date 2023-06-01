@@ -4,8 +4,7 @@ use lib 'lib', 't/lib';
 use Test::Most;
 use WebService::OpenSky::Test qw( set_response );
 
-my $fetch_raw_data = WebService::OpenSky->new( raw     => 1, testing => 1 );
-my $open_sky       = WebService::OpenSky->new( testing => 1 );
+my $opensky = WebService::OpenSky->new( testing => 1 );
 
 my %params = (
     extended => 1,
@@ -19,18 +18,22 @@ my %params = (
 
 subtest 'Flight data is available' => sub {
     set_response( three_vectors() );
-    my $vectors_raw = $fetch_raw_data->get_states(%params);
-    set_response( three_vectors() );
-    my $states = $open_sky->get_states(%params);
-    explain $vectors_raw;
+    my $response = $opensky->get_states(%params);
+    ok !$response->_inflated, 'We should not have inflated the response yet';
+    my $vectors_raw = $response->raw_response;
+    ok !$response->_inflated, 'We should not have inflated the response yet';
 
+    is ref($vectors_raw), 'HASH', 'We should be able to fetch the raw response';
     my $state_vectors = $vectors_raw->{states};
     is scalar @$state_vectors, 3, 'We should have three vectors';
-    my $vectors = $states->vectors;
-    is $vectors->count, 3, 'We should have three vectors';
+
+    my $vectors = $response->iterator;
+    ok $response->_inflated,                                  'The response should be inflated now';
+    ok $vectors->isa('WebService::OpenSky::Utils::Iterator'), 'We should have an iterator';
+    is $response->count, 3, 'We should have three vectors';
 
     my @params = $vectors->first->_get_params;
-    while ( my $flight = $states->next ) {
+    while ( my $flight = $response->next ) {
         my $raw_flight = shift @$state_vectors;
         foreach my $param (@params) {
             my $value = shift @$raw_flight;
@@ -47,11 +50,8 @@ Content-Length: 0
 Date: Sun, 28 May 2023 08:02:21 GMT
 END
     set_response($not_found);
-    my $vectors_raw = $fetch_raw_data->get_states(%params);
-    set_response($not_found);
-    my $states = $open_sky->get_states(%params);
-    ok !@{ $vectors_raw->{states} }, 'We should have no state vectors for raw data';
-    ok !$states->count,              'We should have no state vectors for objects';
+    my $states = $opensky->get_states(%params);
+    ok !$states->count, 'We should have no state vectors for objects if we have a 404';
 };
 
 done_testing;

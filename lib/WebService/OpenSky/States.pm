@@ -4,56 +4,29 @@ package WebService::OpenSky::States;
 
 our $VERSION = '0.005';
 use Moose;
-use WebService::OpenSky::Types qw(
-  InstanceOf
-  PositiveOrZeroInt
-);
 use WebService::OpenSky::Core::StateVector;
 use WebService::OpenSky::Utils::Iterator;
 use experimental qw(signatures);
+extends 'WebService::OpenSky::Response';
 
-has time => ( is => 'ro', isa => PositiveOrZeroInt );
-has vectors => (
-    is      => 'ro',
-    isa     => InstanceOf ['WebService::OpenSky::Utils::Iterator'],
-    handles => [qw(first next reset all count)],
-);
+sub _create_response_iterator ($self) {
+    my @responses = map { WebService::OpenSky::Core::StateVector->new($_) } $self->raw_response->{states}->@*;
+    return WebService::OpenSky::Utils::Iterator->new( rows => \@responses );
+}
 
-around 'BUILDARGS' => sub ( $orig, $class, $response ) {
-    my $states = $response->{states};
-    my $time   = $response->{time};
-
-    my @state_vectors = map { WebService::OpenSky::Core::StateVector->new($_) } @$states;
-    my $iterator      = WebService::OpenSky::Utils::Iterator->new( rows => \@state_vectors );
-
-    return $class->$orig( vectors => $iterator, time => $time );
-};
-
+# trusted method only called by WebService::OpenSky
+sub _empty_response ($self) {
+    return {
+        time   => 0,
+        states => [],
+    };
+}
 __PACKAGE__->meta->make_immutable;
 
-=head1 METHODS
+__END__
 
-=head2 time
+=head1 DESCRIPTION
 
-The time which the state vectors in this response are associated with. All
-vectors represent the state of a vehicle with the interval C<[time=1, time]>.
-
-=head2 vectors
-
-Returns an iterator of L<WebService::OpenSky::Core::StateVector> objects.
-
-As a convenience, the following methods are delegated to the iterator:
-
-=over 4
-
-=item * first
-
-=item * next
-
-=item * reset
-
-=item * all
-
-=item * count
-
-=back
+This class inherits from L<WebService::OpenSky::Response>. Please see that
+module for the available methods. Individual responses are from the
+L<WesbService::OpenSky::Core::StateVector> class.

@@ -140,10 +140,11 @@ sub get_states ( $self, $seconds, $icao24, $bbox, $extended ) {
         time   => time - ( $seconds // 0 ),
         states => [],
     };
-    if ( $self->raw ) {
-        return $response;
-    }
-    return WebService::OpenSky::States->new($response);
+    return WebService::OpenSky::States->new(
+        route        => $route,
+        query        => \%params,
+        raw_response => $response,
+    );
 }
 
 signature_for get_my_states => (
@@ -166,10 +167,12 @@ sub get_my_states ( $self, $seconds, $icao24, $serials ) {
 
     my $route    = '/states/own';
     my $response = $self->_get_response( route => $route, params => \%params );
-    if ( $self->raw ) {
-        return $response;
-    }
-    return WebService::OpenSky::States->new($response);
+
+    return WebService::OpenSky::States->new(
+        route        => $route,
+        query        => \%params,
+        raw_response => $response,
+    );
 }
 
 sub get_flights_from_interval ( $self, $begin, $end ) {
@@ -184,10 +187,11 @@ sub get_flights_from_interval ( $self, $begin, $end ) {
     my $route    = '/flights/all';
     my $response = $self->_get_response( route => $route, params => \%params ) // [];
 
-    if ( $self->raw ) {
-        return $response;
-    }
-    return WebService::OpenSky::Flights->new($response);
+    return WebService::OpenSky::Flights->new(
+        route        => $route,
+        query        => \%params,
+        raw_response => $response,
+    );
 }
 
 sub get_flights_by_aircraft ( $self, $icao24, $begin, $end ) {
@@ -202,10 +206,11 @@ sub get_flights_by_aircraft ( $self, $icao24, $begin, $end ) {
     my $route    = '/flights/aircraft';
     my $response = $self->_get_response( route => $route, params => \%params ) // [];
 
-    if ( $self->raw ) {
-        return $response;
-    }
-    return WebService::OpenSky::Flights->new($response);
+    return WebService::OpenSky::Flights->new(
+        route        => $route,
+        query        => \%params,
+        raw_response => $response,
+    );
 }
 
 sub get_arrivals_by_airport ( $self, $airport, $begin, $end ) {
@@ -220,10 +225,11 @@ sub get_arrivals_by_airport ( $self, $airport, $begin, $end ) {
     my $route    = '/flights/arrival';
     my $response = $self->_get_response( route => $route, params => \%params ) // [];
 
-    if ( $self->raw ) {
-        return $response;
-    }
-    return WebService::OpenSky::Flights->new($response);
+    return WebService::OpenSky::Flights->new(
+        route        => $route,
+        query        => \%params,
+        raw_response => $response,
+    );
 }
 
 sub get_departures_by_airport ( $self, $airport, $begin, $end ) {
@@ -238,10 +244,11 @@ sub get_departures_by_airport ( $self, $airport, $begin, $end ) {
     my $route    = '/flights/departure';
     my $response = $self->_get_response( route => $route, params => \%params ) // [];
 
-    if ( $self->raw ) {
-        return $response;
-    }
-    return WebService::OpenSky::Flights->new($response);
+    return WebService::OpenSky::Flights->new(
+        route        => $route,
+        query        => \%params,
+        raw_response => $response,
+    );
 }
 
 signature_for _get_response => (
