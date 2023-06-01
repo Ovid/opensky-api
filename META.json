@@ -103,7 +103,7 @@
          "file" : "lib/OpenSky/API/Types.pm",
          "version" : "0.004"
       },
-      "OpenSky::API::Utils::Iterator" : {
+      "WebService::OpenSky::Utils::Iterator" : {
          "file" : "lib/OpenSky/API/Utils/Iterator.pm",
          "version" : "0.004"
       }

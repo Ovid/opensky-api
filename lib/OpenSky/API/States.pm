@@ -9,13 +9,13 @@ use OpenSky::API::Types qw(
   PositiveOrZeroInt
 );
 use WebService::OpenSky::Core::StateVector;
-use OpenSky::API::Utils::Iterator;
+use WebService::OpenSky::Utils::Iterator;
 use experimental qw(signatures);
 
 has time => ( is => 'ro', isa => PositiveOrZeroInt );
 has vectors => (
     is      => 'ro',
-    isa     => InstanceOf ['OpenSky::API::Utils::Iterator'],
+    isa     => InstanceOf ['WebService::OpenSky::Utils::Iterator'],
     handles => [qw(first next reset all count)],
 );
 
@@ -24,7 +24,7 @@ around 'BUILDARGS' => sub ( $orig, $class, $response ) {
     my $time   = $response->{time};
 
     my @state_vectors = map { WebService::OpenSky::Core::StateVector->new($_) } @$states;
-    my $iterator      = OpenSky::API::Utils::Iterator->new( rows => \@state_vectors );
+    my $iterator      = WebService::OpenSky::Utils::Iterator->new( rows => \@state_vectors );
 
     return $class->$orig( vectors => $iterator, time => $time );
 };

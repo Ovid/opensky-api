@@ -2,9 +2,9 @@
 
 use lib 'lib';
 use Test::Most;
-use OpenSky::API::Utils::Iterator;
+use WebService::OpenSky::Utils::Iterator;
 
-my $results = OpenSky::API::Utils::Iterator->new( rows => [qw/foo bar baz/] );
+my $results = WebService::OpenSky::Utils::Iterator->new( rows => [qw/foo bar baz/] );
 
 is $results->count, 3,     'We should have the correct number of results in our iterator';
 is $results->first, 'foo', 'first() result should always be foo';

@@ -6,18 +6,18 @@ our $VERSION = '0.005';
 use Moose;
 use OpenSky::API::Types qw(InstanceOf);
 use WebService::OpenSky::Core::Flight;
-use OpenSky::API::Utils::Iterator;
+use WebService::OpenSky::Utils::Iterator;
 use experimental qw(signatures);
 
 has flights => (
     is      => 'ro',
-    isa     => InstanceOf ['OpenSky::API::Utils::Iterator'],
+    isa     => InstanceOf ['WebService::OpenSky::Utils::Iterator'],
     handles => [qw(first next reset all count)],
 );
 
 around 'BUILDARGS' => sub ( $orig, $class, $response ) {
     my @flights  = map { WebService::OpenSky::Core::Flight->new($_) } $response->@*;
-    my $iterator = OpenSky::API::Utils::Iterator->new( rows => \@flights );
+    my $iterator = WebService::OpenSky::Utils::Iterator->new( rows => \@flights );
 
     return $class->$orig( flights => $iterator );
 };

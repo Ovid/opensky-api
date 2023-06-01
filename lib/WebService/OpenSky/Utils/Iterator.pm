@@ -1,6 +1,6 @@
 # ABSTARCT: Internal iterator class for OpenSky::API
 
-package OpenSky::API::Utils::Iterator;
+package WebService::OpenSky::Utils::Iterator;
 
 our $VERSION = '0.005';
 use Moose;
@@ -56,9 +56,9 @@ __END__
 
 =head1 SYNOPSIS
 
-    use OpenSky::API::Utils::Iterator;
+    use WebService::OpenSky::Utils::Iterator;
 
-    my $results = OpenSky::API::Utils::Iterator->new( rows => [ 1, 2, 3 ] );
+    my $results = WebService::OpenSky::Utils::Iterator->new( rows => [ 1, 2, 3 ] );
 
     while ( my $result = $results->next ) {
         ...
