@@ -3,8 +3,10 @@ Revision history for OpenSky-API
 {{$NEXT}}
 
 0.006     2023-06-01 11:05:51 CEST
+          - Fixed some misspelled POD leading to broken links
 
 0.005     2023-06-01 10:26:41 CEST
+          - Renamed to WebService::OpenSky
 
 0.004     2023-05-29 11:25:32 CEST
           - Fixed iterator bug and wrote tests for it (thanks, toreau)
