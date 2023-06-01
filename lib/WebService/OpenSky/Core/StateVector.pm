@@ -91,8 +91,11 @@ __END__
     use WebService::OpenSky;
     my $opensky = WebService::OpenSky->new;
     my $states  = $opensky->get_states;
-    my $state   = $states->[0];
-    say $state->callsign;
+    while ( my $vector = $states->next ) {
+        say $vector->callsign;
+        say $vector->latitude;
+        say $vector->longitude;
+    }
 
 =head1 DESCRIPTION
 

@@ -27,6 +27,17 @@ has [ __PACKAGE__->_get_params() ] => ( is => 'ro', required => 1 );
 
 __PACKAGE__->meta->make_immutable;
 
+__END__
+
+=head1 SYNOPSIS
+
+    use WebService::OpenSky;
+    my $opensky = WebService::OpenSky->new;
+    my $flights  = $opensky->get_arrivals_by_airport('KLAX', $start, $end);
+    while ( my $flight = $flights->next ) {
+        say $flight->callsign;
+    }
+
 =head1 DESCRIPTION
 
 This class is not to be instantiated directly. It is a read-only class representing 
