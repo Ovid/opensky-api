@@ -7,6 +7,7 @@ use Type::Library
   -declare => qw(
   Longitude
   Latitude
+  Route
   );
 
 use Type::Utils -all;
@@ -21,6 +22,13 @@ BEGIN {
 
 declare Longitude, as Num, where { $_ >= -180 and $lon <= 180 };
 declare Latitude,  as Num, where { $_ >= -90  and $lon <= 90 };
+declare Route,     as NonEmptySimpleStr, where {
+    $_ =~ m{
+    ^ 
+    /\w+
+    (?:/\w+)*
+$}x
+};
 
 __END__
 
@@ -37,3 +45,7 @@ A number between -180 and 180, inclusive.
 =head2 Latitude
 
 A number between -90 and 90, inclusive.
+
+=head2 Route
+
+A non-empty string that matches C<< /^\/\w+(?:\/\w+)*$/ >>.

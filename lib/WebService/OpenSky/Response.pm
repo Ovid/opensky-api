@@ -8,10 +8,9 @@ use WebService::OpenSky::Utils::Iterator;
 use WebService::OpenSky::Types qw(
   ArrayRef
   Bool
-  Enum
   HashRef
   InstanceOf
-  NonEmptySimpleStr
+  Route
 );
 use Carp 'croak';
 use experimental qw(signatures);
@@ -24,7 +23,7 @@ has raw_response => (
 
 has route => (
     is       => 'ro',
-    isa      => NonEmptySimpleStr,
+    isa      => Route,
     required => 1,
 );
 
@@ -43,7 +42,7 @@ has _iterator => (
 
 has _inflated => (
     is       => 'rw',
-    isa      => 'Bool',
+    isa      => Bool,
     default  => 0,
     init_arg => undef,
 );
