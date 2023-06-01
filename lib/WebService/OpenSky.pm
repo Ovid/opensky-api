@@ -4,7 +4,7 @@ package WebService::OpenSky;
 
 # ABSTRACT: Perl interface to the OpenSky Network API
 
-our $VERSION = '0.006';
+our $VERSION = '0.007';
 use Moose;
 use WebService::OpenSky::Types qw(
   ArrayRef
