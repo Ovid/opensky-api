@@ -79,7 +79,7 @@
       }
    },
    "provides" : {
-      "OpenSky::API" : {
+      "WebService::OpenSky" : {
          "file" : "lib/OpenSky/API.pm",
          "version" : "0.004"
       },
@@ -95,11 +95,11 @@
          "file" : "lib/OpenSky/API/Flights.pm",
          "version" : "0.004"
       },
-      "OpenSky::API::States" : {
+      "WebService::OpenSky::States" : {
          "file" : "lib/OpenSky/API/States.pm",
          "version" : "0.004"
       },
-      "OpenSky::API::Types" : {
+      "WebService::OpenSky::Types" : {
          "file" : "lib/OpenSky/API/Types.pm",
          "version" : "0.004"
       },

@@ -14,7 +14,7 @@ my %WriteMakefileArgs = (
   },
   "DISTNAME" => "OpenSky-API",
   "LICENSE" => "artistic_2",
-  "NAME" => "OpenSky::API",
+  "NAME" => "WebService::OpenSky",
   "PREREQ_PM" => {
     "Carp" => 0,
     "Config::INI::Reader" => 0,

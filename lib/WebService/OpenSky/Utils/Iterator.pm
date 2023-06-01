@@ -1,10 +1,10 @@
-# ABSTARCT: Internal iterator class for OpenSky::API
+# ABSTARCT: Internal iterator class for WebService::OpenSky
 
 package WebService::OpenSky::Utils::Iterator;
 
 our $VERSION = '0.005';
 use Moose;
-use OpenSky::API::Types qw(
+use WebService::OpenSky::Types qw(
   ArrayRef
   Defined
   InstanceOf

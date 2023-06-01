@@ -1,6 +1,6 @@
-# ABSTRACT: Type library for OpenSky::API
+# ABSTRACT: Type library for WebService::OpenSky
 
-package OpenSky::API::Types;
+package WebService::OpenSky::Types;
 our $VERSION = '0.005';
 use Type::Library
   -base,

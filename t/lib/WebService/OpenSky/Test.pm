@@ -1,11 +1,11 @@
-package OpenSky::API::Test;
+package WebService::OpenSky::Test;
 
 use strict;
 use warnings;
 use Carp 'confess';
 use experimental qw(signatures);
 no warnings 'redefine';
-use OpenSky::API;
+use WebService::OpenSky;
 use parent 'Exporter';
 our @EXPORT_OK = qw( set_response );
 
@@ -14,7 +14,7 @@ BEGIN {
     $ENV{OPENSKY_PASSWORD} = 'hunter2';
 }
 
-sub OpenSky::API::_GET ( $self, $url ) {
+sub WebService::OpenSky::_GET ( $self, $url ) {
     my $res           = Mojo::Message::Response->new;
     my $next_response = _get_response();
     $res->parse($next_response);

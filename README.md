@@ -1,6 +1,6 @@
 # NAME
 
-OpenSky::API - Perl interface to the OpenSky Network API
+WebService::OpenSky - Perl interface to the OpenSky Network API
 
 # VERSION
 
@@ -9,9 +9,9 @@ version 0.004
 # SYNOPSIS
 
 ```perl
-use OpenSky::API;
+use WebService::OpenSky;
 
-my $api = OpenSky::API->new(
+my $api = WebService::OpenSky->new(
     username => 'username',
     password => 'password',
 );
@@ -36,7 +36,7 @@ but with some changes to make it more user-friendly for Perl developers.
 Basic usage:
 
 ```perl
-my $open_sky = OpenSky::API->new;
+my $open_sky = WebService::OpenSky->new;
 ```
 
 This will create an instance of the API object with no authentication. This only allows you access
@@ -45,7 +45,7 @@ to the `get_states` method.
 If you want to use the other methods, you will need to provide a username and password:
 
 ```perl
-my $open_sky = OpenSky::API->new(
+my $open_sky = WebService::OpenSky->new(
     username => 'username',
     password => 'password',
 );
@@ -67,7 +67,7 @@ password = s3cr3t
 If you'd like that file in another directory, just pass the `config` argument:
 
 ```perl
-my $open_sky = OpenSky::API->new(
+my $open_sky = WebService::OpenSky->new(
     config => '/path/to/config',
 );
 ```
@@ -76,7 +76,7 @@ By default, all methods return objects. If you want to get the raw results, you 
 attribute in the constructor:
 
 ```perl
-my $open_sky = OpenSky::API->new(
+my $open_sky = WebService::OpenSky->new(
     raw => 1,
 );
 ```
@@ -85,7 +85,7 @@ If you are debugging why something failed, pass the `debug` attribute to see
 a `STDERR` trace of the requests and responses:
 
 ```perl
-my $open_sky = OpenSky::API->new(
+my $open_sky = WebService::OpenSky->new(
     debug => 1,
 );
 ```
@@ -107,7 +107,7 @@ This allows you to keep a consistent interface without having to check for
 my $states = $api->get_states;
 ```
 
-Returns an instance of [OpenSky::API::States](https://metacpan.org/pod/OpenSky%3A%3AAPI%3A%3AStates). if `raw => 1` was passed
+Returns an instance of [WebService::OpenSky::States](https://metacpan.org/pod/OpenSky%3A%3AAPI%3A%3AStates). if `raw => 1` was passed
 to the constructor, this will be the raw data structure instead.
 
 This API call can be used to retrieve any state vector of the
@@ -180,7 +180,7 @@ my $states = $api->get_states(
 my $states = $api->get_my_states;
 ```
 
-Returns an instance of [OpenSky::API::States](https://metacpan.org/pod/OpenSky%3A%3AAPI%3A%3AStates). if `raw => 1` was passed,
+Returns an instance of [WebService::OpenSky::States](https://metacpan.org/pod/OpenSky%3A%3AAPI%3A%3AStates). if `raw => 1` was passed,
 this will be the raw data structure instead.
 
 This API call can be used to retrieve state vectors for your own
@@ -305,10 +305,10 @@ mainly uses), has the ICAO24 transponder address `a835af`. Running the
 following code ...
 
 ```perl
-use OpenSky::API;
+use WebService::OpenSky;
 
 my $musks_jet = 'a835af';
-my $openapi   = OpenSky::API->new;
+my $openapi   = WebService::OpenSky->new;
 
 my $days = 7;
 my $now  = time;

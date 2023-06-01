@@ -1,12 +1,12 @@
 # see also https://github.com/openskynetwork/opensky-api
 
-package OpenSky::API;
+package WebService::OpenSky;
 
 # ABSTRACT: Perl interface to the OpenSky Network API
 
 our $VERSION = '0.005';
 use Moose;
-use OpenSky::API::Types qw(
+use WebService::OpenSky::Types qw(
   ArrayRef
   Bool
   Dict
@@ -19,7 +19,7 @@ use OpenSky::API::Types qw(
   Num
   Optional
 );
-use OpenSky::API::States;
+use WebService::OpenSky::States;
 use WebService::OpenSky::Flights;
 use PerlX::Maybe;
 use Config::INI::Reader;
@@ -143,7 +143,7 @@ sub get_states ( $self, $seconds, $icao24, $bbox, $extended ) {
     if ( $self->raw ) {
         return $response;
     }
-    return OpenSky::API::States->new($response);
+    return WebService::OpenSky::States->new($response);
 }
 
 signature_for get_my_states => (
@@ -169,7 +169,7 @@ sub get_my_states ( $self, $seconds, $icao24, $serials ) {
     if ( $self->raw ) {
         return $response;
     }
-    return OpenSky::API::States->new($response);
+    return WebService::OpenSky::States->new($response);
 }
 
 sub get_flights_from_interval ( $self, $begin, $end ) {
@@ -310,9 +310,9 @@ __END__
 
 =head1 SYNOPSIS
 
-    use OpenSky::API;
+    use WebService::OpenSky;
 
-    my $api = OpenSky::API->new(
+    my $api = WebService::OpenSky->new(
         username => 'username',
         password => 'password',
     );
@@ -335,14 +335,14 @@ but with some changes to make it more user-friendly for Perl developers.
 
 Basic usage:
 
-    my $open_sky = OpenSky::API->new;
+    my $open_sky = WebService::OpenSky->new;
 
 This will create an instance of the API object with no authentication. This only allows you access
 to the C<get_states> method.
 
 If you want to use the other methods, you will need to provide a username and password:
 
-    my $open_sky = OpenSky::API->new(
+    my $open_sky = WebService::OpenSky->new(
         username => 'username',
         password => 'password',
     );
@@ -360,21 +360,21 @@ with the following contents:
 
 If you'd like that file in another directory, just pass the C<config> argument:
 
-    my $open_sky = OpenSky::API->new(
+    my $open_sky = WebService::OpenSky->new(
         config => '/path/to/config',
     );
 
 By default, all methods return objects. If you want to get the raw results, you can set the C<raw>
 attribute in the constructor:
 
-    my $open_sky = OpenSky::API->new(
+    my $open_sky = WebService::OpenSky->new(
         raw => 1,
     );
 
 If you are debugging why something failed, pass the C<debug> attribute to see
 a C<STDERR> trace of the requests and responses:
 
-    my $open_sky = OpenSky::API->new(
+    my $open_sky = WebService::OpenSky->new(
         debug => 1,
     );
 
@@ -393,7 +393,7 @@ C<undef> everywhere.
 
     my $states = $api->get_states;
 
-Returns an instance of L<OpenSky::API::States>. if C<< raw => 1 >> was passed
+Returns an instance of L<WebService::OpenSky::States>. if C<< raw => 1 >> was passed
 to the constructor, this will be the raw data structure instead.
 
 This API call can be used to retrieve any state vector of the
@@ -460,7 +460,7 @@ Any and all of the above parameters can be combined.
 
     my $states = $api->get_my_states;
 
-Returns an instance of L<OpenSky::API::States>. if C<< raw => 1 >> was passed,
+Returns an instance of L<WebService::OpenSky::States>. if C<< raw => 1 >> was passed,
 this will be the raw data structure instead.
 
 This API call can be used to retrieve state vectors for your own
@@ -580,10 +580,10 @@ example, Elon Musk's primary private jet (he has three, but this is the one he
 mainly uses), has the ICAO24 transponder address C<a835af>. Running the
 following code ...
 
-    use OpenSky::API;
+    use WebService::OpenSky;
 
     my $musks_jet = 'a835af';
-    my $openapi   = OpenSky::API->new;
+    my $openapi   = WebService::OpenSky->new;
 
     my $days = 7;
     my $now  = time;

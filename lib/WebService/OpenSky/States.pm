@@ -1,10 +1,10 @@
 # ,A class representing a states response from the OpenSky Network API
 
-package OpenSky::API::States;
+package WebService::OpenSky::States;
 
 our $VERSION = '0.005';
 use Moose;
-use OpenSky::API::Types qw(
+use WebService::OpenSky::Types qw(
   InstanceOf
   PositiveOrZeroInt
 );

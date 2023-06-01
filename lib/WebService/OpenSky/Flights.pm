@@ -4,7 +4,7 @@ package WebService::OpenSky::Flights;
 
 our $VERSION = '0.005';
 use Moose;
-use OpenSky::API::Types qw(InstanceOf);
+use WebService::OpenSky::Types qw(InstanceOf);
 use WebService::OpenSky::Core::Flight;
 use WebService::OpenSky::Utils::Iterator;
 use experimental qw(signatures);

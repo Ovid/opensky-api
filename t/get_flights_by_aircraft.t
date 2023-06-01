@@ -2,10 +2,10 @@
 
 use lib 'lib', 't/lib';
 use Test::Most;
-use OpenSky::API::Test qw( set_response );
+use WebService::OpenSky::Test qw( set_response );
 
-my $raw     = OpenSky::API->new( raw     => 1, testing => 1 );
-my $objects = OpenSky::API->new( testing => 1 );
+my $raw     = WebService::OpenSky->new( raw     => 1, testing => 1 );
+my $objects = WebService::OpenSky->new( testing => 1 );
 
 my $now    = time;
 my $then   = $now - 3600;

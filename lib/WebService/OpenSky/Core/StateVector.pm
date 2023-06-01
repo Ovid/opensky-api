@@ -88,8 +88,8 @@ __END__
 
 =head1 SYNOPSIS
 
-    use OpenSky::API;
-    my $opensky = OpenSky::API->new;
+    use WebService::OpenSky;
+    my $opensky = WebService::OpenSky->new;
     my $states  = $opensky->get_states;
     my $state   = $states->[0];
     say $state->callsign;

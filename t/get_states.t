@@ -2,10 +2,10 @@
 
 use lib 'lib', 't/lib';
 use Test::Most;
-use OpenSky::API::Test qw( set_response );
+use WebService::OpenSky::Test qw( set_response );
 
-my $fetch_raw_data = OpenSky::API->new( raw     => 1, testing => 1 );
-my $open_sky       = OpenSky::API->new( testing => 1 );
+my $fetch_raw_data = WebService::OpenSky->new( raw     => 1, testing => 1 );
+my $open_sky       = WebService::OpenSky->new( testing => 1 );
 
 my %params = (
     extended => 1,
