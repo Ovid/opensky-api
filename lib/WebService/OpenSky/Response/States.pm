@@ -2,7 +2,7 @@
 
 package WebService::OpenSky::Response::States;
 
-our $VERSION = '0.007';
+our $VERSION = '0.008';
 use Moose;
 use WebService::OpenSky::Core::StateVector;
 use experimental qw(signatures);
