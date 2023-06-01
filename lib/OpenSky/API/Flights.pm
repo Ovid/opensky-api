@@ -5,7 +5,7 @@ package OpenSky::API::Flights;
 our $VERSION = '0.005';
 use Moose;
 use OpenSky::API::Types qw(InstanceOf);
-use OpenSky::API::Core::Flight;
+use WebService::OpenSky::Core::Flight;
 use OpenSky::API::Utils::Iterator;
 use experimental qw(signatures);
 
@@ -16,7 +16,7 @@ has flights => (
 );
 
 around 'BUILDARGS' => sub ( $orig, $class, $response ) {
-    my @flights  = map { OpenSky::API::Core::Flight->new($_) } $response->@*;
+    my @flights  = map { WebService::OpenSky::Core::Flight->new($_) } $response->@*;
     my $iterator = OpenSky::API::Utils::Iterator->new( rows => \@flights );
 
     return $class->$orig( flights => $iterator );
@@ -30,7 +30,7 @@ __END__
 
 =head2 flights
 
-Returns an iterator of L<OpenSky::API::Core::Flight> objects.
+Returns an iterator of L<WebService::OpenSky::Core::Flight> objects.
 
 As a convenience, the following methods are delegated to the iterator:
 

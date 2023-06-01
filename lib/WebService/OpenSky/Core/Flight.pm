@@ -1,6 +1,6 @@
 # ABSTRACT: Flight class
 
-package OpenSky::API::Core::Flight;
+package WebService::OpenSky::Core::Flight;
 
 our $VERSION = '0.005';
 
