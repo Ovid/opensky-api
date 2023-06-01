@@ -12,7 +12,7 @@
       "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
       "version" : 2
    },
-   "name" : "OpenSky-API",
+   "name" : "WebService-OpenSky",
    "no_index" : {
       "directory" : [
          "eg",
@@ -80,32 +80,36 @@
    },
    "provides" : {
       "WebService::OpenSky" : {
-         "file" : "lib/OpenSky/API.pm",
-         "version" : "0.004"
+         "file" : "lib/WebService/OpenSky.pm",
+         "version" : "0.005"
       },
       "WebService::OpenSky::Core::Flight" : {
-         "file" : "lib/OpenSky/API/Core/Flight.pm",
-         "version" : "0.004"
+         "file" : "lib/WebService/OpenSky/Core/Flight.pm",
+         "version" : "0.005"
       },
       "WebService::OpenSky::Core::StateVector" : {
-         "file" : "lib/OpenSky/API/Core/StateVector.pm",
-         "version" : "0.004"
+         "file" : "lib/WebService/OpenSky/Core/StateVector.pm",
+         "version" : "0.005"
+      },
+      "WebService::OpenSky::Response" : {
+         "file" : "lib/WebService/OpenSky/Response.pm",
+         "version" : "0.005"
       },
       "WebService::OpenSky::Response::Flights" : {
-         "file" : "lib/OpenSky/API/Flights.pm",
-         "version" : "0.004"
+         "file" : "lib/WebService/OpenSky/Response/Flights.pm",
+         "version" : "0.005"
       },
       "WebService::OpenSky::Response::States" : {
-         "file" : "lib/OpenSky/API/States.pm",
-         "version" : "0.004"
+         "file" : "lib/WebService/OpenSky/Response/States.pm",
+         "version" : "0.005"
       },
       "WebService::OpenSky::Types" : {
-         "file" : "lib/OpenSky/API/Types.pm",
-         "version" : "0.004"
+         "file" : "lib/WebService/OpenSky/Types.pm",
+         "version" : "0.005"
       },
       "WebService::OpenSky::Utils::Iterator" : {
-         "file" : "lib/OpenSky/API/Utils/Iterator.pm",
-         "version" : "0.004"
+         "file" : "lib/WebService/OpenSky/Utils/Iterator.pm",
+         "version" : "0.005"
       }
    },
    "release_status" : "stable",
@@ -120,7 +124,7 @@
          "web" : "https://github.com/Ovid/opensky-api"
       }
    },
-   "version" : "0.004",
+   "version" : "0.005",
    "x_contributors" : [
       "Ovid <ovid@cpan.org>"
    ],
