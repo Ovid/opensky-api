@@ -11,9 +11,9 @@ my %WriteMakefileArgs = (
   "CONFIGURE_REQUIRES" => {
     "ExtUtils::MakeMaker" => 0
   },
-  "DISTNAME" => "OpenSky-API",
+  "DISTNAME" => "WebService-OpenSky",
   "LICENSE" => "artistic_2",
-  "NAME" => "OpenSky::API",
+  "NAME" => "WebService::OpenSky",
   "PREREQ_PM" => {
     "Carp" => 0,
     "Config::INI::Reader" => 0,

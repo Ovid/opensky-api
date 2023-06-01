@@ -72,13 +72,13 @@ my $open_sky = WebService::OpenSky->new(
 );
 ```
 
-By default, all methods return objects. If you want to get the raw results, you can set the `raw`
-attribute in the constructor:
+All methods return objects. However, we don't inflate the results into objects
+until you ask for the next result. This is to avoid inflating all results if it's expensive.
+In that case, you can ask for the raw results:
 
 ```perl
-my $open_sky = WebService::OpenSky->new(
-    raw => 1,
-);
+my $open_sky = WebService::OpenSky->new->get_states;
+my $raw = $open_sky->raw_response;
 ```
 
 If you are debugging why something failed, pass the `debug` attribute to see
@@ -107,16 +107,16 @@ This allows you to keep a consistent interface without having to check for
 my $states = $api->get_states;
 ```
 
-Returns an instance of [WebService::OpenSky::Response::States](https://metacpan.org/pod/WebService%3A%3AOpenSky%3A%3AStates). if `raw => 1` was passed
-to the constructor, this will be the raw data structure instead.
+Returns an instance of [WebService::OpenSky::Response::States](https://metacpan.org/pod/WebService%3A%3AOpenSky%3A%3AResponse%3A%3AStates).
 
-This API call can be used to retrieve any state vector of the
-OpenSky. Please note that rate limits apply for this call. For API calls
-without rate limitation, see `get_my_states`.
+This API call can be used to retrieve any state vector of the OpenSky. Please
+note that rate limits apply for this call. For API calls without rate
+limitation, see `get_my_states`.
 
 By default, the above fetches all current state vectors.
 
-You can (optionally) request state vectors for particular airplanes or times using the following request parameters:
+You can (optionally) request state vectors for particular airplanes or times
+using the following request parameters:
 
 ```perl
 my $states = $api->get_states(
@@ -129,7 +129,9 @@ Both parameters are optional.
 
 - `icao24`
 
-    One or more ICAO24 transponder addresses represented by a hex string (e.g. abc9f3). To filter multiple ICAO24 append the property once for each address. If omitted, the state vectors of all aircraft are returned.
+    One or more ICAO24 transponder addresses represented by a hex string (e.g.
+    abc9f3). To filter multiple ICAO24 append the property once for each address.
+    If omitted, the state vectors of all aircraft are returned.
 
 - `time`
 
@@ -180,15 +182,14 @@ my $states = $api->get_states(
 my $states = $api->get_my_states;
 ```
 
-Returns an instance of [WebService::OpenSky::Response::States](https://metacpan.org/pod/WebService%3A%3AOpenSky%3A%3AStates). if `raw => 1` was passed,
-this will be the raw data structure instead.
+Returns an instance of [WebService::OpenSky::Response::States](https://metacpan.org/pod/WebService%3A%3AOpenSky%3A%3AResponse%3A%3AStates).
 
-This API call can be used to retrieve state vectors for your own
-sensors without rate limitations. Note that authentication is required for
-this operation, otherwise you will get a 403 - Forbidden.
+This API call can be used to retrieve state vectors for your own sensors
+without rate limitations. Note that authentication is required for this
+operation, otherwise you will get a 403 - Forbidden.
 
-By default, the above fetches all current state vectors for your states. However, you can also pass
-arguments to fine-tune this:
+By default, the above fetches all current state vectors for your states.
+However, you can also pass arguments to fine-tune this:
 
 ```perl
 my $states = $api->get_my_states(
@@ -200,7 +201,8 @@ my $states = $api->get_my_states(
 
 - `time`
 
-    The time in seconds since epoch (Unix timestamp to retrieve states for. Current time will be used if omitted.
+    The time in seconds since epoch (Unix timestamp to retrieve states for.
+    Current time will be used if omitted.
 
 - &lt;icao24>
 
@@ -221,8 +223,7 @@ my $states = $api->get_my_states(
 my $arrivals = $api->get_arrivals_by_airport('KJFK', $start, $end);
 ```
 
-Returns an instance of [WebService::OpenSky::Response::Flights](https://metacpan.org/pod/WebService%3A%3AOpenSky%3A%3AFlights). if `raw => 1` was
-passed, you will get the raw data structure instead.
+Returns an instance of [WebService::OpenSky::Response::Flights](https://metacpan.org/pod/WebService%3A%3AOpenSky%3A%3AResponse%3A%3AFlights).
 
 Positional arguments:
 
@@ -250,8 +251,7 @@ Identical to `get_arrivals_by_airport`, but returns departures instead of arriva
 my $flights = $api->get_flights_by_aircraft('abc9f3', $start, $end);
 ```
 
-Returns an instance of [WebService::OpenSky::Response::Flights](https://metacpan.org/pod/WebService%3A%3AOpenSky%3A%3AFlights). if `raw => 1` was passed
-to the constructor, you will get the raw data structure instead.
+Returns an instance of [WebService::OpenSky::Response::Flights](https://metacpan.org/pod/WebService%3A%3AOpenSky%3A%3AResponse%3A%3AFlights).
 
 The first argument is the ICAO24 transponder address of the aircraft you want.
 
@@ -261,8 +261,7 @@ The first argument is the ICAO24 transponder address of the aircraft you want.
 my $flights = $api->get_flights_from_interval($start, $end);
 ```
 
-Returns an instance of [WebService::OpenSky::Response::Flights](https://metacpan.org/pod/WebService%3A%3AOpenSky%3A%3AFlights). if `raw => 1` was passed
-to the constructor, you will get the raw data structure instead.
+Returns an instance of [WebService::OpenSky::Response::Flights](https://metacpan.org/pod/WebService%3A%3AOpenSky%3A%3AResponse%3A%3AFlights).
 
 ## `limit_remaining`
 
