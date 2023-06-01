@@ -1,6 +1,8 @@
 Revision history for OpenSky-API
 
 {{$NEXT}}
+
+0.007     2023-06-01 11:14:56 CEST
           - Fixed some incorrect code in POD examples.
 
 0.006     2023-06-01 11:05:51 CEST
