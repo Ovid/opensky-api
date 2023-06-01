@@ -102,7 +102,12 @@ has limit_remaining => (
             lomax => 4.6,
         );
         my $route = '/states/all';
-        return $self->_get_response( route => $route, params => \%params, credits => 1 );
+        return $self->_get_response(
+            route   => $route,
+            params  => \%params,
+            credits => 1,
+            class   => 'WebService::OpenSky::States',
+        );
     },
 );
 
@@ -135,15 +140,10 @@ sub get_states ( $self, $seconds, $icao24, $bbox, $extended ) {
         $params{$_} = $bbox->{$_} for qw( lamin lomin lamax lomax );
     }
 
-    my $route    = '/states/all';
-    my $response = $self->_get_response( route => $route, params => \%params, no_auth_required => 1 ) // {
-        time   => time - ( $seconds // 0 ),
-        states => [],
-    };
-    return WebService::OpenSky::States->new(
-        route        => $route,
-        query        => \%params,
-        raw_response => $response,
+    return $self->_get_response(
+        route  => '/states/all',
+        params => \%params,
+        class  => 'WebService::OpenSky::States',
     );
 }
 
@@ -164,14 +164,10 @@ sub get_my_states ( $self, $seconds, $icao24, $serials ) {
         maybe icao24  => $icao24,
         maybe serials => $serials,
     );
-
-    my $route    = '/states/own';
-    my $response = $self->_get_response( route => $route, params => \%params );
-
-    return WebService::OpenSky::States->new(
-        route        => $route,
-        query        => \%params,
-        raw_response => $response,
+    return $self->_get_response(
+        route  => '/states/own',
+        params => \%params,
+        class  => 'WebService::OpenSky::States',
     );
 }
 
@@ -183,14 +179,11 @@ sub get_flights_from_interval ( $self, $begin, $end ) {
         croak 'The time interval must be smaller than two hours.';
     }
 
-    my %params   = ( begin => $begin, end => $end );
-    my $route    = '/flights/all';
-    my $response = $self->_get_response( route => $route, params => \%params ) // [];
-
-    return WebService::OpenSky::Flights->new(
-        route        => $route,
-        query        => \%params,
-        raw_response => $response,
+    my %params = ( begin => $begin, end => $end );
+    return $self->_get_response(
+        route  => '/flights/all',
+        params => \%params,
+        class  => 'WebService::OpenSky::Flights',
     );
 }
 
@@ -202,14 +195,11 @@ sub get_flights_by_aircraft ( $self, $icao24, $begin, $end ) {
         croak 'The time interval must be smaller than 30 days.';
     }
 
-    my %params   = ( icao24 => $icao24, begin => $begin, end => $end );
-    my $route    = '/flights/aircraft';
-    my $response = $self->_get_response( route => $route, params => \%params ) // [];
-
-    return WebService::OpenSky::Flights->new(
-        route        => $route,
-        query        => \%params,
-        raw_response => $response,
+    my %params = ( icao24 => $icao24, begin => $begin, end => $end );
+    return $self->_get_response(
+        route  => '/flights/aircraft',
+        params => \%params,
+        class  => 'WebService::OpenSky::Flights',
     );
 }
 
@@ -221,14 +211,11 @@ sub get_arrivals_by_airport ( $self, $airport, $begin, $end ) {
         croak 'The time interval must be smaller than 7 days.';
     }
 
-    my %params   = ( airport => $airport, begin => $begin, end => $end );
-    my $route    = '/flights/arrival';
-    my $response = $self->_get_response( route => $route, params => \%params ) // [];
-
-    return WebService::OpenSky::Flights->new(
-        route        => $route,
-        query        => \%params,
-        raw_response => $response,
+    my %params = ( airport => $airport, begin => $begin, end => $end );
+    return $self->_get_response(
+        route  => '/flights/arrival',
+        params => \%params,
+        class  => 'WebService::OpenSky::Flights',
     );
 }
 
@@ -240,14 +227,11 @@ sub get_departures_by_airport ( $self, $airport, $begin, $end ) {
         croak 'The time interval must be smaller than 7 days.';
     }
 
-    my %params   = ( airport => $airport, begin => $begin, end => $end );
-    my $route    = '/flights/departure';
-    my $response = $self->_get_response( route => $route, params => \%params ) // [];
-
-    return WebService::OpenSky::Flights->new(
-        route        => $route,
-        query        => \%params,
-        raw_response => $response,
+    my %params = ( airport => $airport, begin => $begin, end => $end );
+    return $self->_get_response(
+        route  => '/flights/departure',
+        params => \%params,
+        class  => 'WebService::OpenSky::Flights',
     );
 }
 
@@ -257,12 +241,13 @@ signature_for _get_response => (
         route            => NonEmptyStr,
         params           => Optional [HashRef],
         credits          => Optional [Bool],
+        class            => Optional [NonEmptyStr],
         no_auth_required => Optional [Bool],
     ],
     named_to_list => 1,
 );
 
-sub _get_response ( $self, $route, $params, $credits, $no_auth_required ) {
+sub _get_response ( $self, $route, $params, $credits, $response_class, $no_auth_required ) {
     my $url = $self->_url( $route, $params, $no_auth_required );
 
     my $response  = $self->_GET($url);
@@ -273,20 +258,24 @@ sub _get_response ( $self, $route, $params, $credits, $no_auth_required ) {
     # not all requests cost credits, so we only want to set the limit if
     # $remaining is defined
     $self->_set_limit_remaining($remaining) if !$credits && defined $remaining;
-    if ( !$response->is_success ) {
-        if ( $response->code == 404 ) {
 
-            # this is annoying. If the didn't match any criteria, return a 200
-            # and and empty element. Instead, we get a 404.
-            return;
-        }
+    # this is annoying. If the didn't match any criteria, the service should return a 200
+    # and an empty response. Instead, we get a 404.
+    if ( !$response->is_success && $response->code != 404 ) {
         croak $response->to_string;
     }
     return $remaining if $credits;
+    $DB::single = 1;
+    my $response_body = $response->body;
     if ( $self->debug ) {
-        $self->_debug( $response->body );
+        $self->_debug($response_body);
     }
-    return decode_json( $response->body );
+    my $raw_response = $response_body ? decode_json($response_body) : undef;
+    return $response_class->new(
+        route              => $route,
+        query              => $params,
+        maybe raw_response => $raw_response,
+    );
 }
 
 # an easy target to override for testing

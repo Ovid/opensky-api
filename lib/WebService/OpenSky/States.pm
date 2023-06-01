@@ -12,7 +12,6 @@ sub _create_response_objects ($self) {
     return [ map { WebService::OpenSky::Core::StateVector->new($_) } $self->raw_response->{states}->@* ];
 }
 
-# trusted method only called by WebService::OpenSky
 sub _empty_response ($self) {
     return {
         time   => 0,

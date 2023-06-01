@@ -12,7 +12,6 @@ sub _create_response_objects ($self) {
     return [ map { WebService::OpenSky::Core::Flight->new($_) } $self->raw_response->@* ];
 }
 
-# trusted method only called by WebService::OpenSky
 sub _empty_response ($self) {
     return [];
 }
