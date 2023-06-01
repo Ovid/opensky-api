@@ -1,6 +1,6 @@
 # ABSTRACT: A class representing a flights response from the OpenSky Network API
 
-package WebService::OpenSky::Flights;
+package WebService::OpenSky::Response::Flights;
 
 our $VERSION = '0.005';
 use Moose;

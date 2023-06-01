@@ -107,7 +107,7 @@ This allows you to keep a consistent interface without having to check for
 my $states = $api->get_states;
 ```
 
-Returns an instance of [WebService::OpenSky::States](https://metacpan.org/pod/WebService%3A%3AOpenSky%3A%3AStates). if `raw => 1` was passed
+Returns an instance of [WebService::OpenSky::Response::States](https://metacpan.org/pod/WebService%3A%3AOpenSky%3A%3AStates). if `raw => 1` was passed
 to the constructor, this will be the raw data structure instead.
 
 This API call can be used to retrieve any state vector of the
@@ -180,7 +180,7 @@ my $states = $api->get_states(
 my $states = $api->get_my_states;
 ```
 
-Returns an instance of [WebService::OpenSky::States](https://metacpan.org/pod/WebService%3A%3AOpenSky%3A%3AStates). if `raw => 1` was passed,
+Returns an instance of [WebService::OpenSky::Response::States](https://metacpan.org/pod/WebService%3A%3AOpenSky%3A%3AStates). if `raw => 1` was passed,
 this will be the raw data structure instead.
 
 This API call can be used to retrieve state vectors for your own
@@ -221,7 +221,7 @@ my $states = $api->get_my_states(
 my $arrivals = $api->get_arrivals_by_airport('KJFK', $start, $end);
 ```
 
-Returns an instance of [WebService::OpenSky::Flights](https://metacpan.org/pod/WebService%3A%3AOpenSky%3A%3AFlights). if `raw => 1` was
+Returns an instance of [WebService::OpenSky::Response::Flights](https://metacpan.org/pod/WebService%3A%3AOpenSky%3A%3AFlights). if `raw => 1` was
 passed, you will get the raw data structure instead.
 
 Positional arguments:
@@ -250,7 +250,7 @@ Identical to `get_arrivals_by_airport`, but returns departures instead of arriva
 my $flights = $api->get_flights_by_aircraft('abc9f3', $start, $end);
 ```
 
-Returns an instance of [WebService::OpenSky::Flights](https://metacpan.org/pod/WebService%3A%3AOpenSky%3A%3AFlights). if `raw => 1` was passed
+Returns an instance of [WebService::OpenSky::Response::Flights](https://metacpan.org/pod/WebService%3A%3AOpenSky%3A%3AFlights). if `raw => 1` was passed
 to the constructor, you will get the raw data structure instead.
 
 The first argument is the ICAO24 transponder address of the aircraft you want.
@@ -261,7 +261,7 @@ The first argument is the ICAO24 transponder address of the aircraft you want.
 my $flights = $api->get_flights_from_interval($start, $end);
 ```
 
-Returns an instance of [WebService::OpenSky::Flights](https://metacpan.org/pod/WebService%3A%3AOpenSky%3A%3AFlights). if `raw => 1` was passed
+Returns an instance of [WebService::OpenSky::Response::Flights](https://metacpan.org/pod/WebService%3A%3AOpenSky%3A%3AFlights). if `raw => 1` was passed
 to the constructor, you will get the raw data structure instead.
 
 ## `limit_remaining`

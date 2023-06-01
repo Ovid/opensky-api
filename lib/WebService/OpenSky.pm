@@ -19,8 +19,8 @@ use WebService::OpenSky::Types qw(
   Num
   Optional
 );
-use WebService::OpenSky::States;
-use WebService::OpenSky::Flights;
+use WebService::OpenSky::Response::States;
+use WebService::OpenSky::Response::Flights;
 use PerlX::Maybe;
 use Config::INI::Reader;
 use Carp qw( croak );
@@ -106,7 +106,7 @@ has limit_remaining => (
             route   => $route,
             params  => \%params,
             credits => 1,
-            class   => 'WebService::OpenSky::States',
+            class   => 'WebService::OpenSky::Response::States',
         );
     },
 );
@@ -143,7 +143,7 @@ sub get_states ( $self, $seconds, $icao24, $bbox, $extended ) {
     return $self->_get_response(
         route  => '/states/all',
         params => \%params,
-        class  => 'WebService::OpenSky::States',
+        class  => 'WebService::OpenSky::Response::States',
     );
 }
 
@@ -167,7 +167,7 @@ sub get_my_states ( $self, $seconds, $icao24, $serials ) {
     return $self->_get_response(
         route  => '/states/own',
         params => \%params,
-        class  => 'WebService::OpenSky::States',
+        class  => 'WebService::OpenSky::Response::States',
     );
 }
 
@@ -183,7 +183,7 @@ sub get_flights_from_interval ( $self, $begin, $end ) {
     return $self->_get_response(
         route  => '/flights/all',
         params => \%params,
-        class  => 'WebService::OpenSky::Flights',
+        class  => 'WebService::OpenSky::Response::Flights',
     );
 }
 
@@ -199,7 +199,7 @@ sub get_flights_by_aircraft ( $self, $icao24, $begin, $end ) {
     return $self->_get_response(
         route  => '/flights/aircraft',
         params => \%params,
-        class  => 'WebService::OpenSky::Flights',
+        class  => 'WebService::OpenSky::Response::Flights',
     );
 }
 
@@ -215,7 +215,7 @@ sub get_arrivals_by_airport ( $self, $airport, $begin, $end ) {
     return $self->_get_response(
         route  => '/flights/arrival',
         params => \%params,
-        class  => 'WebService::OpenSky::Flights',
+        class  => 'WebService::OpenSky::Response::Flights',
     );
 }
 
@@ -231,7 +231,7 @@ sub get_departures_by_airport ( $self, $airport, $begin, $end ) {
     return $self->_get_response(
         route  => '/flights/departure',
         params => \%params,
-        class  => 'WebService::OpenSky::Flights',
+        class  => 'WebService::OpenSky::Response::Flights',
     );
 }
 
@@ -389,7 +389,7 @@ C<undef> everywhere.
 
     my $states = $api->get_states;
 
-Returns an instance of L<WebService::OpenSky::States>. if C<< raw => 1 >> was passed
+Returns an instance of L<WebService::OpenSky::Response::States>. if C<< raw => 1 >> was passed
 to the constructor, this will be the raw data structure instead.
 
 This API call can be used to retrieve any state vector of the
@@ -456,7 +456,7 @@ Any and all of the above parameters can be combined.
 
     my $states = $api->get_my_states;
 
-Returns an instance of L<WebService::OpenSky::States>. if C<< raw => 1 >> was passed,
+Returns an instance of L<WebService::OpenSky::Response::States>. if C<< raw => 1 >> was passed,
 this will be the raw data structure instead.
 
 This API call can be used to retrieve state vectors for your own
@@ -497,7 +497,7 @@ given receivers.
 
     my $arrivals = $api->get_arrivals_by_airport('KJFK', $start, $end);
 
-Returns an instance of L<WebService::OpenSky::Flights>. if C<< raw => 1 >> was
+Returns an instance of L<WebService::OpenSky::Response::Flights>. if C<< raw => 1 >> was
 passed, you will get the raw data structure instead.
 
 Positional arguments:
@@ -528,7 +528,7 @@ Identical to C<get_arrivals_by_airport>, but returns departures instead of arriv
 
     my $flights = $api->get_flights_by_aircraft('abc9f3', $start, $end);
 
-Returns an instance of L<WebService::OpenSky::Flights>. if C<< raw => 1 >> was passed
+Returns an instance of L<WebService::OpenSky::Response::Flights>. if C<< raw => 1 >> was passed
 to the constructor, you will get the raw data structure instead.
 
 The first argument is the ICAO24 transponder address of the aircraft you want.
@@ -537,7 +537,7 @@ The first argument is the ICAO24 transponder address of the aircraft you want.
 
     my $flights = $api->get_flights_from_interval($start, $end);
 
-Returns an instance of L<WebService::OpenSky::Flights>. if C<< raw => 1 >> was passed
+Returns an instance of L<WebService::OpenSky::Response::Flights>. if C<< raw => 1 >> was passed
 to the constructor, you will get the raw data structure instead.
 
 =head2 C<limit_remaining>

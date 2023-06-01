@@ -1,6 +1,6 @@
 # ABSTRACT: A class representing a states response from the OpenSky Network API
 
-package WebService::OpenSky::States;
+package WebService::OpenSky::Response::States;
 
 our $VERSION = '0.005';
 use Moose;
