@@ -49,6 +49,17 @@ has _config_data => (
     init_arg => undef,
     lazy     => 1,
     default  => sub ($self) {
+        my $file = $self->config // '';
+        if ( !-e $file ) {
+            if ($self->testing                                            # if we're testing
+                || ( $self->_has_username   && $self->_has_password )     # or we have a username and password
+                || ( $ENV{OPENSKY_USERNAME} && $ENV{OPENSKY_PASSWORD} )
+              )                                                           # even if they're from %ENV
+            {
+                return {};                                                # then we don't need a config file
+            }
+            croak("Config file '$file' does not exist");
+        }
         Config::INI::Reader->read_file( $self->config );
     },
 );
@@ -61,26 +72,31 @@ has _ua => (
 );
 
 has _username => (
-    is       => 'ro',
-    isa      => NonEmptyStr,
-    lazy     => 1,
-    init_arg => 'username',
-    default  => sub ($self) { $ENV{OPENSKY_USERNAME} // $self->_config_data->{opensky}{username} },
+    is        => 'ro',
+    isa       => NonEmptyStr,
+    lazy      => 1,
+    init_arg  => 'username',
+    predicate => '_has_username',
+    default   => sub ($self) { $ENV{OPENSKY_USERNAME} // $self->_config_data->{opensky}{username} },
 );
 
 has _password => (
-    is       => 'ro',
-    isa      => NonEmptyStr,
-    lazy     => 1,
-    init_arg => 'password',
-    default  => sub ($self) { $ENV{OPENSKY_PASSWORD} // $self->_config_data->{opensky}{password} },
+    is        => 'ro',
+    isa       => NonEmptyStr,
+    lazy      => 1,
+    init_arg  => 'password',
+    predicate => '_has_password',
+    default   => sub ($self) { $ENV{OPENSKY_PASSWORD} // $self->_config_data->{opensky}{password} },
 );
 
 has _base_url => (
     is       => 'ro',
     init_arg => 'base_url',
     isa      => NonEmptyStr,
-    default  => sub ($self) {'https://opensky-network.org/api'},
+    lazy     => 1,
+    default  => sub ($self) {
+        $self->_config_data->{_}{base_url} // 'https://opensky-network.org/api';
+    },
 );
 
 has limit_remaining => (
@@ -265,7 +281,6 @@ sub _get_response ( $self, $route, $params, $credits, $response_class, $no_auth_
         croak $response->to_string;
     }
     return $remaining if $credits;
-    $DB::single = 1;
     my $response_body = $response->body;
     if ( $self->debug ) {
         $self->_debug($response_body);
@@ -373,6 +388,14 @@ a C<STDERR> trace of the requests and responses:
     my $open_sky = WebService::OpenSky->new(
         debug => 1,
     );
+
+In the unlikely event that you need to change the base URL, you can do so:
+
+	my $open_sky = WebService::OpenSky->new(
+		base_url => 'https://opensky-network.org/api/v2',
+	);
+
+The base url defaults to L<https://opensky-network.org/api>.
 
 =head1 METHODS
 

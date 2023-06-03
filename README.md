@@ -90,6 +90,16 @@ my $open_sky = WebService::OpenSky->new(
 );
 ```
 
+In the unlikely event that you need to change the base URL, you can do so:
+
+```perl
+    my $open_sky = WebService::OpenSky->new(
+            base_url => 'https://opensky-network.org/api/v2',
+    );
+```
+
+The base url defaults to [https://opensky-network.org/api](https://opensky-network.org/api).
+
 # METHODS
 
 For more insight to all methods, see [the OpenSky API
