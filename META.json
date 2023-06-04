@@ -36,7 +36,6 @@
             "IPC::Open3" : "0",
             "Test::More" : "0",
             "Test::Pod" : "1.41",
-            "perl" : "5.006",
             "strict" : "0",
             "warnings" : "0"
          }
@@ -56,7 +55,8 @@
             "Types::Common::Numeric" : "0",
             "Types::Common::String" : "0",
             "Types::Standard" : "0",
-            "experimental" : "0"
+            "experimental" : "0",
+            "perl" : "v5.20.0"
          }
       },
       "test" : {
@@ -64,6 +64,7 @@
             "CPAN::Meta" : "2.120900"
          },
          "requires" : {
+            "Capture::Tiny" : "0",
             "Exporter" : "0",
             "ExtUtils::MakeMaker" : "0",
             "File::Spec" : "0",
@@ -81,35 +82,35 @@
    "provides" : {
       "WebService::OpenSky" : {
          "file" : "lib/WebService/OpenSky.pm",
-         "version" : "0.007"
+         "version" : "0.008"
       },
       "WebService::OpenSky::Core::Flight" : {
          "file" : "lib/WebService/OpenSky/Core/Flight.pm",
-         "version" : "0.007"
+         "version" : "0.008"
       },
       "WebService::OpenSky::Core::StateVector" : {
          "file" : "lib/WebService/OpenSky/Core/StateVector.pm",
-         "version" : "0.007"
+         "version" : "0.008"
       },
       "WebService::OpenSky::Response" : {
          "file" : "lib/WebService/OpenSky/Response.pm",
-         "version" : "0.007"
+         "version" : "0.008"
       },
       "WebService::OpenSky::Response::Flights" : {
          "file" : "lib/WebService/OpenSky/Response/Flights.pm",
-         "version" : "0.007"
+         "version" : "0.008"
       },
       "WebService::OpenSky::Response::States" : {
          "file" : "lib/WebService/OpenSky/Response/States.pm",
-         "version" : "0.007"
+         "version" : "0.008"
       },
       "WebService::OpenSky::Types" : {
          "file" : "lib/WebService/OpenSky/Types.pm",
-         "version" : "0.007"
+         "version" : "0.008"
       },
       "WebService::OpenSky::Utils::Iterator" : {
          "file" : "lib/WebService/OpenSky/Utils/Iterator.pm",
-         "version" : "0.007"
+         "version" : "0.008"
       }
    },
    "release_status" : "stable",
@@ -124,7 +125,7 @@
          "web" : "https://github.com/Ovid/opensky-api"
       }
    },
-   "version" : "0.007",
+   "version" : "0.008",
    "x_contributors" : [
       "Ovid <ovid@cpan.org>"
    ],

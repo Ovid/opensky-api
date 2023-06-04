@@ -1,6 +1,8 @@
 Revision history for OpenSky-API
 
 {{$NEXT}}
+
+0.008     2023-06-04 11:14:43 CEST
 		  - Assert minimum Perl version in dist.ini.
 		  - Missing config file has a slightly better error message now
 		  - Config file no longer required if user/pass is already available
