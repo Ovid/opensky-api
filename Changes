@@ -4,6 +4,7 @@ Revision history for OpenSky-API
 		  - Assert minimum Perl version in dist.ini.
 		  - Missing config file has a slightly better error message now
 		  - Config file no longer required if user/pass is already available
+		  - Implement rate limits for get_states and get_my_states
 
 0.007     2023-06-01 11:14:56 CEST
           - Fixed some incorrect code in POD examples.

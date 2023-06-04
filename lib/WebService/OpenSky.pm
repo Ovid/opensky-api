@@ -5,6 +5,7 @@ package WebService::OpenSky;
 # ABSTRACT: Perl interface to the OpenSky Network API
 
 our $VERSION = '0.008';
+use v5.20.0;
 use Moose;
 use WebService::OpenSky::Types qw(
   ArrayRef
@@ -18,12 +19,13 @@ use WebService::OpenSky::Types qw(
   NonEmptyStr
   Num
   Optional
+  Undef
 );
 use WebService::OpenSky::Response::States;
 use WebService::OpenSky::Response::Flights;
 use PerlX::Maybe;
 use Config::INI::Reader;
-use Carp qw( croak );
+use Carp qw( carp croak );
 
 use Mojo::UserAgent;
 use Mojo::URL;
@@ -64,6 +66,18 @@ has _config_data => (
     },
 );
 
+has _last_request_time => (
+    is      => 'ro',
+    isa     => HashRef [Int],
+    lazy    => 1,
+    default => sub {
+        return {
+            '/states/all' => 0,
+            '/states/own' => 0,
+        };
+    }
+);
+
 has _ua => (
     is       => 'ro',
     isa      => InstanceOf ['Mojo::UserAgent'],
@@ -101,30 +115,10 @@ has _base_url => (
 
 has limit_remaining => (
     is      => 'ro',
-    isa     => Int,
+    isa     => Int | Undef,
     lazy    => 1,
     writer  => '_set_limit_remaining',
-    default => sub ($self) {
-        return 4000 if $self->testing;
-
-        # per their documentation,
-        # https://openskynetwork.github.io/opensky-api/rest.html#api-credit-usage,
-        # this request should only cost one credit. However, it appears to
-        # cost three.
-        my %params = (
-            lamin => 49.7,
-            lomin => 3.2,
-            lamax => 50.5,
-            lomax => 4.6,
-        );
-        my $route = '/states/all';
-        return $self->_get_response(
-            route   => $route,
-            params  => \%params,
-            credits => 1,
-            class   => 'WebService::OpenSky::Response::States',
-        );
-    },
+    default => undef,
 );
 
 signature_for get_states => (
@@ -160,6 +154,9 @@ sub get_states ( $self, $seconds, $icao24, $bbox, $extended ) {
         route  => '/states/all',
         params => \%params,
         class  => 'WebService::OpenSky::Response::States',
+
+        # rate_limit_noauth => 10,
+        # rate_limit_auth => 5,
     );
 }
 
@@ -184,6 +181,9 @@ sub get_my_states ( $self, $seconds, $icao24, $serials ) {
         route  => '/states/own',
         params => \%params,
         class  => 'WebService::OpenSky::Response::States',
+
+        # rate_limit_noauth => undef,
+        # rate_limit_auth => 1,
     );
 }
 
@@ -266,6 +266,31 @@ signature_for _get_response => (
 sub _get_response ( $self, $route, $params, $credits, $response_class, $no_auth_required ) {
     my $url = $self->_url( $route, $params, $no_auth_required );
 
+    if ( !$self->testing ) {
+
+        # XXX Ugh. I'd like to use attributes to attach metadata to the
+        # methods, but with the attribute order switch, I can't. So I'm
+        # going to leave this ugly hack here.
+        my $method
+          = $route eq '/states/all' ? 'get_states'
+          : $route eq '/states/own' ? 'get_my_states'
+          :                           undef;
+        if ($method) {
+            if ( my $delay_remaining = $self->delay_remaining($method) ) {
+                carp("You have to wait $delay_remaining seconds before you can call $method again.");
+                return;
+            }
+        }
+
+        my $limit_remaining = $self->limit_remaining;
+
+        # if it's not defined, we haven't made an API call yet
+        if ( defined $limit_remaining && !$limit_remaining ) {
+            carp("You have no API credits left for $route. See https://openskynetwork.github.io/opensky-api/rest.html#limitations");
+            return;
+        }
+    }
+
     my $response  = $self->_GET($url);
     my $remaining = $response->headers->header('X-Rate-Limit-Remaining');
 
@@ -280,6 +305,8 @@ sub _get_response ( $self, $route, $params, $credits, $response_class, $no_auth_
     if ( !$response->is_success && $response->code != 404 ) {
         croak $response->to_string;
     }
+    $self->_last_request_time->{$route} = time;
+
     return $remaining if $credits;
     my $response_body = $response->body;
     if ( $self->debug ) {
@@ -291,6 +318,41 @@ sub _get_response ( $self, $route, $params, $credits, $response_class, $no_auth_
         query              => $params,
         maybe raw_response => $raw_response,
     );
+}
+
+sub delay_remaining ( $self, $method ) {
+    state $rate_limits = {
+        'get_states' => {
+            route  => '/states/all',
+            noauth => 10,
+            auth   => 5,
+        },
+        'get_my_states' => {
+            route  => '/states/own',
+            noauth => undef,
+            auth   => 1,
+        },
+    };
+    my $delay = $rate_limits->{$method} or return 0;
+    my $limit = $self->limit_remaining;
+
+    # XXX this is a bit of a hack. If we've not made any requests yet, we don't
+    # know what the limit is, so we assume they haven't made a request yet.
+    # Probably need to revisit this. I would love an API endpoint that lets me
+    # fetch the limit
+    return 0 if !defined $limit;
+
+    return 0 if $limit <= 0;
+    my $seconds_since_last_request = time - $self->_last_request_time->{ $delay->{route} };
+
+    my $delay_remaining;
+    if ( !$self->_password && $delay->{noauth} ) {
+        $delay = $delay->{noauth} - $seconds_since_last_request;
+    }
+    else {
+        $delay_remaining = $delay->{auth} - $seconds_since_last_request;
+    }
+    return $delay_remaining > 0 ? $delay_remaining : 0;
 }
 
 # an easy target to override for testing
@@ -566,8 +628,27 @@ Returns an instance of L<WebService::OpenSky::Response::Flights>.
 
     my $limit = $api->limit_remaining;
 
-The methods to retrieve state vectors of sensors other than your own are rate
-limited. As of this writing, this is only C<get_states>. See
+Returns the number of API credits you have left. See
+L<https://openskynetwork.github.io/opensky-api/rest.html#limitations> for more
+information.
+
+If you have not yet made a request, this method will return C<undef>.
+
+=head2 C<delay_remaining($method)>
+
+	my $delay = $api->delay_remaining('get_states');
+
+When you call either C<get_states> or C<get_my_states>, the your calls will
+be rate limited. This method returns the number of seconds you have to wait
+until you can make another request. You can C<sleep> that many seconds before making
+a new call:
+
+	sleep $api->delay_remaining('get_states');
+
+If you attempt to make a request before the delay has expired, you will get a warning and
+no request will be made.
+
+See
 L<limitations|https://openskynetwork.github.io/opensky-api/rest.html#limitations>
 for more details.
 
@@ -630,10 +711,6 @@ data is useful, but not all of those reasons are good. Be good.
 =head1 TODO
 
 =over 4
-
-=item * Implement rate limits
-
-=item * Add a C<is_rate_limited> method to results
 
 =item * Add Waypoints and Flight Routes
 
