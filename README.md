@@ -279,8 +279,31 @@ Returns an instance of [WebService::OpenSky::Response::Flights](https://metacpan
 my $limit = $api->limit_remaining;
 ```
 
-The methods to retrieve state vectors of sensors other than your own are rate
-limited. As of this writing, this is only `get_states`. See
+Returns the number of API credits you have left. See
+[https://openskynetwork.github.io/opensky-api/rest.html#limitations](https://openskynetwork.github.io/opensky-api/rest.html#limitations) for more
+information.
+
+If you have not yet made a request, this method will return `undef`.
+
+## `delay_remaining($method)`
+
+```perl
+    my $delay = $api->delay_remaining('get_states');
+```
+
+When you call either `get_states` or `get_my_states`, the your calls will
+be rate limited. This method returns the number of seconds you have to wait
+until you can make another request. You can `sleep` that many seconds before making
+a new call:
+
+```
+    sleep $api->delay_remaining('get_states');
+```
+
+If you attempt to make a request before the delay has expired, you will get a warning and
+no request will be made.
+
+See
 [limitations](https://openskynetwork.github.io/opensky-api/rest.html#limitations)
 for more details.
 
@@ -348,8 +371,6 @@ data is useful, but not all of those reasons are good. Be good.
 
 # TODO
 
-- Implement rate limits
-- Add a `is_rate_limited` method to results
 - Add Waypoints and Flight Routes
 
 # AUTHOR

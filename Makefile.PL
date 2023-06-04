@@ -32,6 +32,7 @@ my %WriteMakefileArgs = (
     "experimental" => 0
   },
   "TEST_REQUIRES" => {
+    "Capture::Tiny" => 0,
     "Exporter" => 0,
     "ExtUtils::MakeMaker" => 0,
     "File::Spec" => 0,
@@ -52,6 +53,7 @@ my %WriteMakefileArgs = (
 
 
 my %FallbackPrereqs = (
+  "Capture::Tiny" => 0,
   "Carp" => 0,
   "Config::INI::Reader" => 0,
   "Exporter" => 0,
