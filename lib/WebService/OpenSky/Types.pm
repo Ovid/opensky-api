@@ -1,7 +1,7 @@
 # ABSTRACT: Type library for WebService::OpenSky
 
 package WebService::OpenSky::Types;
-our $VERSION = '0.008';
+our $VERSION = '0.009';
 use Type::Library
   -base,
   -declare => qw(
