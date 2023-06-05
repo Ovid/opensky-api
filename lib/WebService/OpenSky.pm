@@ -733,11 +733,3 @@ Others are using the OpenSky API to model the amount of carbon being released
 by the aviation industry, while others have used this public data to predict
 corporate mergers and acquisitions. There are a wealth of reasons why this
 data is useful, but not all of those reasons are good. Be good.
-
-=head1 TODO
-
-=over 4
-
-=item * Add Waypoints and Flight Routes
-
-=back
