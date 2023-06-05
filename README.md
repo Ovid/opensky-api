@@ -4,7 +4,7 @@ WebService::OpenSky - Perl interface to the OpenSky Network API
 
 # VERSION
 
-version 0.008
+version 0.009
 
 # SYNOPSIS
 
@@ -272,6 +272,20 @@ my $flights = $api->get_flights_from_interval($start, $end);
 ```
 
 Returns an instance of [WebService::OpenSky::Response::Flights](https://metacpan.org/pod/WebService%3A%3AOpenSky%3A%3AResponse%3A%3AFlights).
+
+## `get_track_by_aircraft`
+
+```perl
+    my $track = $api->get_track_by_aircraft( $icao24, $start );
+```
+
+Adds support for the experimental [GET
+/tracks](https://openskynetwork.github.io/opensky-api/rest.html#track-by-aircraft)
+endpoint. Returns an instance of
+[WebService::OpenSky::Response::FlightTrack](https://metacpan.org/pod/WebService%3A%3AOpenSky%3A%3AResponse%3A%3AFlightTrack).
+
+Per the OpenSky documentation, this endpoint is experimental and may be removed or simply
+not working at any time.
 
 ## `limit_remaining`
 
