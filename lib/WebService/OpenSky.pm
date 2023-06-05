@@ -23,6 +23,7 @@ use WebService::OpenSky::Types qw(
 );
 use WebService::OpenSky::Response::States;
 use WebService::OpenSky::Response::Flights;
+use WebService::OpenSky::Response::FlightTrack;
 use PerlX::Maybe;
 use Config::INI::Reader;
 use Carp qw( carp croak );
@@ -250,6 +251,19 @@ sub get_departures_by_airport ( $self, $airport, $begin, $end ) {
         class  => 'WebService::OpenSky::Response::Flights',
     );
 }
+
+sub get_track_by_aircraft ( $self, $icao24, $time ) {
+	if ( $time != 0 && ( time - $time ) > 2592 * 1e3 ) {
+		croak 'It is not possible to access flight tracks from more than 30 days in the past.';
+	}
+
+	my %params = ( icao24 => $icao24, time => $time );
+	return $self->_get_response(
+		route  => '/tracks/all',
+		params => \%params,
+		class  => 'WebService::OpenSky::Response::FlightTrack',
+	);
+}	
 
 signature_for _get_response => (
     method => 1,
