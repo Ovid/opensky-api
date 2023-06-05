@@ -40,13 +40,16 @@ __END__
 
 =head1 DESCRIPTION
 
+A set of "waypoints" for a given aircraft flight.
+
 This class inherits from L<WebService::OpenSky::Response>. Please see that
 module for the available methods. Individual responses are from the
 L<WebService::OpenSky::Core::Waypoint> class.
 
 =head1 ADDITIONAL ATTRIBUTES
 
-In addition to the methods and attributes provided by the parent class, this class provides the following:
+In addition to the methods and attributes provided by the parent class, this
+class provides the following:
 
 =head2 C<icao24>
 

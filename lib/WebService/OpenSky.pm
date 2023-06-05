@@ -253,17 +253,17 @@ sub get_departures_by_airport ( $self, $airport, $begin, $end ) {
 }
 
 sub get_track_by_aircraft ( $self, $icao24, $time ) {
-	if ( $time != 0 && ( time - $time ) > 2592 * 1e3 ) {
-		croak 'It is not possible to access flight tracks from more than 30 days in the past.';
-	}
+    if ( $time != 0 && ( time - $time ) > 2592 * 1e3 ) {
+        croak 'It is not possible to access flight tracks from more than 30 days in the past.';
+    }
 
-	my %params = ( icao24 => $icao24, time => $time );
-	return $self->_get_response(
-		route  => '/tracks/all',
-		params => \%params,
-		class  => 'WebService::OpenSky::Response::FlightTrack',
-	);
-}	
+    my %params = ( icao24 => $icao24, time => $time );
+    return $self->_get_response(
+        route  => '/tracks/all',
+        params => \%params,
+        class  => 'WebService::OpenSky::Response::FlightTrack',
+    );
+}
 
 signature_for _get_response => (
     method => 1,
@@ -637,6 +637,18 @@ The first argument is the ICAO24 transponder address of the aircraft you want.
     my $flights = $api->get_flights_from_interval($start, $end);
 
 Returns an instance of L<WebService::OpenSky::Response::Flights>.
+
+=head2 C<get_track_by_aircraft>
+
+	my $track = $api->get_track_by_aircraft( $icao24, $start );
+
+Adds support for the experimental L<GET
+/tracks|https://openskynetwork.github.io/opensky-api/rest.html#track-by-aircraft>
+endpoint. Returns an instance of
+L<WebService::OpenSky::Response::FlightTrack>.
+
+Per the OpenSky documentation, this endpoint is experimental and may be removed or simply
+not working at any time.
 
 =head2 C<limit_remaining>
 
