@@ -626,11 +626,14 @@ Identical to C<get_arrivals_by_airport>, but returns departures instead of arriv
 
 =head2 C<get_flights_by_aircraft>
 
-    my $flights = $api->get_flights_by_aircraft('abc9f3', $start, $end);
+    my $flights = $api->get_flights_by_aircraft($icao24, $start, $end);
 
 Returns an instance of L<WebService::OpenSky::Response::Flights>.
 
-The first argument is the ICAO24 transponder address of the aircraft you want.
+The first argument is the lower-case ICAO24 transponder address of the aircraft you want.
+
+The second and third arguments are the start and end times in seconds since
+epoch (Unix timestamp). Their interval must be equal to or less than 30 days.
 
 =head2 C<get_flights_from_interval>
 
@@ -710,9 +713,9 @@ following code ...
     my $musks_jet = 'a835af';
     my $openapi   = WebService::OpenSky->new;
 
-    my $days = 7;
+    my $days = shift @ARGV // 7;
     my $now  = time;
-    my $then = $now - 86400 * 7;    # up to 7 days ago
+    my $then = $now - 86400 * $days;    # Max 30 days
 
     my $flight_data = $openapi->get_flights_by_aircraft( $musks_jet, $then, $now );
     say "Jet $musks_jet has " . $flight_data->count . " flights";
