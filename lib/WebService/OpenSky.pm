@@ -1,10 +1,8 @@
-# see also https://github.com/openskynetwork/opensky-api
-
 package WebService::OpenSky;
 
 # ABSTRACT: Perl interface to the OpenSky Network API
 
-our $VERSION = '0.2';
+# see also https://github.com/openskynetwork/opensky-api
 use v5.20.0;
 use Moose;
 use WebService::OpenSky::Types qw(
@@ -33,6 +31,8 @@ use Mojo::URL;
 use Mojo::JSON qw( decode_json );
 use Type::Params -sigs;
 use experimental qw( signatures );
+
+our $VERSION = '0.2';
 
 has config => (
     is      => 'ro',

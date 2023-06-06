@@ -1,7 +1,10 @@
+package WebService::OpenSky::Types;
+
 # ABSTRACT: Type library for WebService::OpenSky
 
-package WebService::OpenSky::Types;
-our $VERSION = '0.2';
+use v5.20.0;
+use warnings;
+
 use Type::Library
   -base,
   -declare => qw(
@@ -11,6 +14,7 @@ use Type::Library
   );
 
 use Type::Utils -all;
+our $VERSION = '0.2';
 
 BEGIN {
     extends qw(
@@ -20,8 +24,8 @@ BEGIN {
     );
 }
 
-declare Longitude, as Num, where { $_ >= -180 and $lon <= 180 };
-declare Latitude,  as Num, where { $_ >= -90  and $lon <= 90 };
+declare Longitude, as Num, where { $_ >= -180 and $_ <= 180 };
+declare Latitude,  as Num, where { $_ >= -90  and $_ <= 90 };
 declare Route,     as NonEmptySimpleStr, where {
     $_ =~ m{
     ^ 

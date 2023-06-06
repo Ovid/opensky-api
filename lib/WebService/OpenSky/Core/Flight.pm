@@ -1,11 +1,11 @@
-# ABSTRACT: Flight class
-
 package WebService::OpenSky::Core::Flight;
 
-our $VERSION = '0.2';
+# ABSTRACT: Flight class
 
 use Moose;
 use experimental qw(signatures);
+
+our $VERSION = '0.2';
 
 sub _get_params ($class) {
     return qw(

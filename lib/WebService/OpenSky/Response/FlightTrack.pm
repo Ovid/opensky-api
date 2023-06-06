@@ -1,12 +1,12 @@
-# ABSTRACT: A class representing a flight track from the OpenSky Network API
-
 package WebService::OpenSky::Response::FlightTrack;
 
-our $VERSION = '0.2';
+# ABSTRACT: A class representing a flight track from the OpenSky Network API
 use Moose;
 use WebService::OpenSky::Core::Waypoint;
 use experimental qw(signatures);
 extends 'WebService::OpenSky::Response';
+
+our $VERSION = '0.2';
 
 my @ATTRS = qw(
   icao24

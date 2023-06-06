@@ -2,7 +2,11 @@ Revision history for OpenSky-API
 
 {{$NEXT}}
 
+          - Add Perl::Critic author tests
+          - Move Perl::Tidy tests to xt
+
 0.1       2023-06-06 06:30:26 CEST
+          - Bump version
 
 0.009     2023-06-05 09:26:38 CEST
           - Fix case of one module name

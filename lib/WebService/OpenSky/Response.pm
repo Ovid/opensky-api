@@ -1,8 +1,7 @@
-# ABSTRACT: A class representing a response from the OpenSky Network API
-
 package WebService::OpenSky::Response;
 
-our $VERSION = '0.2';
+# ABSTRACT: A class representing a response from the OpenSky Network API
+
 use Moose;
 use WebService::OpenSky::Utils::Iterator;
 use WebService::OpenSky::Types qw(
@@ -14,6 +13,8 @@ use WebService::OpenSky::Types qw(
 );
 use Carp 'croak';
 use experimental qw(signatures);
+
+our $VERSION = '0.2';
 
 has raw_response => (
     is      => 'ro',
@@ -73,7 +74,7 @@ sub iterator ($self) {
     return $self->_iterator;
 }
 
-sub next ($self) {
+sub next ($self) {    ## no critic (Subroutines::ProhibitBuiltinHomonyms)
     $self->_inflate;
     return $self->iterator->next;
 }
@@ -83,7 +84,7 @@ sub first ($self) {
     return $self->iterator->first;
 }
 
-sub reset ($self) {
+sub reset ($self) {    ## no critic (Subroutines::ProhibitBuiltinHomonyms)
     $self->_inflate;
     return $self->iterator->reset;
 }

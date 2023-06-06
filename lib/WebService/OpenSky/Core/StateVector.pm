@@ -1,10 +1,10 @@
-# ABSTRACT: A class representing a state from the OpenSky Network API
-
 package WebService::OpenSky::Core::StateVector;
 
-our $VERSION = '0.2';
+# ABSTRACT: A class representing a state from the OpenSky Network API
+
 use Moose;
 use experimental qw(signatures);
+our $VERSION = '0.2';
 
 my @PARAMS = qw(
   icao24

@@ -1,8 +1,7 @@
-# ABSTRACT: Internal iterator class for WebService::OpenSky
-
 package WebService::OpenSky::Utils::Iterator;
 
-our $VERSION = '0.2';
+# ABSTRACT: Internal iterator class for WebService::OpenSky
+
 use Moose;
 use WebService::OpenSky::Types qw(
   ArrayRef
@@ -11,6 +10,8 @@ use WebService::OpenSky::Types qw(
   PositiveOrZeroInt
 );
 use experimental qw(signatures);
+
+our $VERSION = '0.2';
 
 has '_rows' => (
     is       => 'ro',
@@ -29,14 +30,14 @@ sub first ($self) {
     return $self->_rows->[0];
 }
 
-sub next ($self) {
+sub next ($self) {    ## no critic (Subroutines::ProhibitBuiltinHomonyms)
     my $i    = $self->_index;
     my $next = $self->_rows->[$i] or return;
     $self->_set_index( $i + 1 );
     return $next;
 }
 
-sub reset ($self) {
+sub reset ($self) {    ## no critic (Subroutines::ProhibitBuiltinHomonyms)
     $self->_set_index(0);
     return 1;
 }
