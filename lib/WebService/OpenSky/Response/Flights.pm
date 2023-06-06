@@ -2,7 +2,7 @@
 
 package WebService::OpenSky::Response::Flights;
 
-our $VERSION = '0.1';
+our $VERSION = '0.2';
 use Moose;
 use WebService::OpenSky::Core::Flight;
 use experimental qw(signatures);
