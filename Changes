@@ -2,6 +2,8 @@ Revision history for OpenSky-API
 
 {{$NEXT}}
 
+0.1       2023-06-06 06:30:26 CEST
+
 0.009     2023-06-05 09:26:38 CEST
           - Fix case of one module name
 
