@@ -1,9 +1,8 @@
 package WebService::OpenSky::Core::Waypoint;
-#
+
 # ABSTRACT: Waypoint class
 
-use Moose;
-use experimental qw(signatures);
+use WebService::OpenSky::Moose;
 
 our $VERSION = '0.3';
 
@@ -17,15 +16,13 @@ sub _get_params ($class) {
       on_ground
     );
 }
-has [ __PACKAGE__->_get_params() ] => ( is => 'ro', required => 1 );
+param [ __PACKAGE__->_get_params() ] => ();
 
 around 'BUILDARGS' => sub ( $orig, $class, $waypoint ) {
     my %value_for;
     @value_for{ $class->_get_params } = @$waypoint;
     return $class->$orig(%value_for);
 };
-
-__PACKAGE__->meta->make_immutable;
 
 __END__
 

@@ -2,8 +2,7 @@ package WebService::OpenSky::Core::StateVector;
 
 # ABSTRACT: A class representing a state from the OpenSky Network API
 
-use Moose;
-use experimental qw(signatures);
+use WebService::OpenSky::Moose;
 our $VERSION = '0.3';
 
 my @PARAMS = qw(
@@ -33,13 +32,13 @@ around 'BUILDARGS' => sub ( $orig, $class, $state ) {
     return $class->$orig(%value_for);
 };
 
-has [@PARAMS] => ( is => 'ro', required => 1 );
+param [@PARAMS] => ();
 
 sub _get_params ($class) {
     return @PARAMS;
 }
 
-sub category_name ($self) {
+method category_name() {
     my $category = $self->category // 0;
     $category = 0 if $category > 20;
     return '' unless $category;
@@ -69,7 +68,7 @@ sub category_name ($self) {
     return $names[$category];
 }
 
-sub position_source_name ($self) {
+method position_source_name() {
     my $source  = $self->position_source // return 'Uknown';
     my @sources = (
         'ADS-B',
@@ -79,8 +78,6 @@ sub position_source_name ($self) {
     );
     return $sources[$source];
 }
-
-__PACKAGE__->meta->make_immutable;
 
 __END__
 

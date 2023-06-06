@@ -2,56 +2,51 @@ package WebService::OpenSky::Utils::Iterator;
 
 # ABSTRACT: Internal iterator class for WebService::OpenSky
 
-use Moose;
+use WebService::OpenSky::Moose;
 use WebService::OpenSky::Types qw(
   ArrayRef
   Defined
   InstanceOf
   PositiveOrZeroInt
 );
-use experimental qw(signatures);
 
 our $VERSION = '0.3';
 
-has '_rows' => (
-    is       => 'ro',
-    isa      => ArrayRef [Defined],
-    init_arg => 'rows',
+param rows => (
+    isa    => ArrayRef [Defined],
+    reader => '_rows',
 );
 
-has '_index' => (
-    is      => 'rw',
+field '_index' => (
     writer  => '_set_index',
     isa     => PositiveOrZeroInt,
     default => 0,
 );
 
-sub first ($self) {
+method first() {
     return $self->_rows->[0];
 }
 
-sub next ($self) {    ## no critic (Subroutines::ProhibitBuiltinHomonyms)
+method next() {    ## no critic (Subroutines::ProhibitBuiltinHomonyms)
     my $i    = $self->_index;
     my $next = $self->_rows->[$i] or return;
     $self->_set_index( $i + 1 );
     return $next;
 }
 
-sub reset ($self) {    ## no critic (Subroutines::ProhibitBuiltinHomonyms)
+method reset() {    ## no critic (Subroutines::ProhibitBuiltinHomonyms)
     $self->_set_index(0);
     return 1;
 }
 
-sub all ($self) {
+method all() {
     return @{ $self->_rows };
 }
 
-sub count ($self) {
+method count() {
     my @all = $self->all;
     return scalar @all;
 }
-
-__PACKAGE__->meta->make_immutable;
 
 __END__
 

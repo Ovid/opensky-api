@@ -1,9 +1,8 @@
 package WebService::OpenSky::Response::FlightTrack;
 
 # ABSTRACT: A class representing a flight track from the OpenSky Network API
-use Moose;
+use WebService::OpenSky::Moose;
 use WebService::OpenSky::Core::Waypoint;
-use experimental qw(signatures);
 extends 'WebService::OpenSky::Response';
 
 our $VERSION = '0.3';
@@ -16,25 +15,24 @@ my @ATTRS = qw(
   path
 );
 
-has [@ATTRS] => ( is => 'rw', required => 0 );
+# XXX ugly, but this is part of an experimental API endpoint from OpenSky
+param [@ATTRS] => ( is => 'rw', required => 0 );
 
-sub BUILD ( $self, @ ) {
+method BUILD(@args) {
     foreach my $attr (@ATTRS) {
         $self->$attr( $self->raw_response->{$attr} );
     }
 }
 
-sub _create_response_objects ($self) {
+method _create_response_objects() {
     my @path = map { WebService::OpenSky::Core::Waypoint->new($_) } $self->path->@*;
     $self->path( \@path );
     return \@path;
 }
 
-sub _empty_response ($self) {
+method _empty_response() {
     return { path => [] };
 }
-
-__PACKAGE__->meta->make_immutable;
 
 __END__
 

@@ -10,8 +10,6 @@ my $now    = time;
 my $then   = $now - 3600;
 my $icao24 = '3c4a9c';
 
-use Test2::Plugin::BailOnFail;
-
 subtest 'Flight data is available' => sub {
     set_response( two_flights() );
     my $flights     = $opensky->get_flights_by_aircraft( $icao24, $then, $now );

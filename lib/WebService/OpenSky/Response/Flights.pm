@@ -2,22 +2,19 @@ package WebService::OpenSky::Response::Flights;
 
 # ABSTRACT: A class representing a flights response from the OpenSky Network API
 
-use Moose;
+use WebService::OpenSky::Moose;
 use WebService::OpenSky::Core::Flight;
-use experimental qw(signatures);
 extends 'WebService::OpenSky::Response';
 
 our $VERSION = '0.3';
 
-sub _create_response_objects ($self) {
+method _create_response_objects() {
     return [ map { WebService::OpenSky::Core::Flight->new($_) } $self->raw_response->@* ];
 }
 
-sub _empty_response ($self) {
+method _empty_response() {
     return [];
 }
-
-__PACKAGE__->meta->make_immutable;
 
 __END__
 

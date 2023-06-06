@@ -2,7 +2,7 @@ package WebService::OpenSky::Response;
 
 # ABSTRACT: A class representing a response from the OpenSky Network API
 
-use Moose;
+use WebService::OpenSky::Moose;
 use WebService::OpenSky::Utils::Iterator;
 use WebService::OpenSky::Types qw(
   ArrayRef
@@ -11,95 +11,86 @@ use WebService::OpenSky::Types qw(
   InstanceOf
   Route
 );
-use Carp 'croak';
-use experimental qw(signatures);
 
 our $VERSION = '0.3';
 
-has raw_response => (
-    is      => 'ro',
+param raw_response => (
     isa     => ArrayRef | HashRef,
-    default => sub ($self) { $self->_empty_response },
+    default => method() { $self->_empty_response },
 );
 
-has route => (
-    is       => 'ro',
-    isa      => Route,
-    required => 1,
+param route => (
+    isa => Route,
 );
 
-has query => (
-    is       => 'ro',
-    isa      => HashRef,
-    required => 1,
+param query => (
+    isa => HashRef,
 );
 
-has _iterator => (
+field _iterator => (
     is       => 'rw',
     isa      => InstanceOf ['WebService::OpenSky::Utils::Iterator'],
     writer   => '_set_iterator',
     init_arg => undef,
 );
 
-has _inflated => (
+field _inflated => (
     is       => 'rw',
     isa      => Bool,
     default  => 0,
     init_arg => undef,
 );
 
-sub BUILD ( $self, @ ) {
+method BUILD(@args) {
     if ( !$self->raw_response ) {
         $self->raw_response( $self->_empty_response );
     }
 }
 
-sub _inflate ($self) {
+method _inflate() {
     return if $self->_inflated;
     my $iterator = WebService::OpenSky::Utils::Iterator->new( rows => $self->_create_response_objects );
     $self->_set_iterator($iterator);
     $self->_inflated(1);
 }
 
-sub _create_response_iterator ($self) {
+method _create_response_iterator() {
     croak 'This method must be implemented by a subclass';
 }
 
-sub _empty_response ($self) {
+method _empty_response() {
     croak 'This method must be implemented by a subclass';
 }
 
-sub iterator ($self) {
+method iterator() {
     $self->_inflate;
     return $self->_iterator;
 }
 
-sub next ($self) {    ## no critic (Subroutines::ProhibitBuiltinHomonyms)
+method next() {    ## no critic (Subroutines::ProhibitBuiltinHomonyms)
     $self->_inflate;
     return $self->iterator->next;
 }
 
-sub first ($self) {
+method first() {
     $self->_inflate;
     return $self->iterator->first;
 }
 
-sub reset ($self) {    ## no critic (Subroutines::ProhibitBuiltinHomonyms)
+method reset() {    ## no critic (Subroutines::ProhibitBuiltinHomonyms)
     $self->_inflate;
     return $self->iterator->reset;
 }
 
-sub all ($self) {
+method all() {
     $self->_inflate;
     return $self->iterator->all;
 }
 
-sub count ($self) {
+method count() {
     $self->_inflate;
     return $self->iterator->count;
 }
-
-__PACKAGE__->meta->make_immutable;
 
 __END__
 

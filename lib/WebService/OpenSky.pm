@@ -4,7 +4,7 @@ package WebService::OpenSky;
 
 # see also https://github.com/openskynetwork/opensky-api
 use v5.20.0;
-use Moose;
+use WebService::OpenSky::Moose;
 use WebService::OpenSky::Types qw(
   ArrayRef
   Bool
@@ -24,34 +24,28 @@ use WebService::OpenSky::Response::Flights;
 use WebService::OpenSky::Response::FlightTrack;
 use PerlX::Maybe;
 use Config::INI::Reader;
-use Carp qw( carp croak );
 
 use Mojo::UserAgent;
 use Mojo::URL;
 use Mojo::JSON qw( decode_json );
 use Type::Params -sigs;
-use experimental qw( signatures );
 
 our $VERSION = '0.3';
 
-has config => (
+param config => (
     is      => 'ro',
     isa     => NonEmptyStr,
-    default => sub ($self) { $ENV{HOME} . '/.openskyrc' },
+    default => method() { $ENV{HOME} . '/.openskyrc' },
 );
 
-has [qw/debug raw testing/] => (
-    is      => 'ro',
+param [qw/debug raw testing/] => (
     isa     => Bool,
     default => 0,
 );
 
-has _config_data => (
-    is       => 'ro',
-    isa      => HashRef,
-    init_arg => undef,
-    lazy     => 1,
-    default  => sub ($self) {
+field _config_data => (
+    isa     => HashRef,
+    default => method() {
         my $file = $self->config // '';
         if ( !-e $file ) {
             if ($self->testing                                            # if we're testing
@@ -67,11 +61,9 @@ has _config_data => (
     },
 );
 
-has _last_request_time => (
-    is      => 'ro',
+field _last_request_time => (
     isa     => HashRef [Int],
-    lazy    => 1,
-    default => sub {
+    default => method() {
         return {
             '/states/all' => 0,
             '/states/own' => 0,
@@ -79,45 +71,38 @@ has _last_request_time => (
     }
 );
 
-has _ua => (
-    is       => 'ro',
-    isa      => InstanceOf ['Mojo::UserAgent'],
-    init_arg => undef,
-    default  => sub { Mojo::UserAgent->new },
+field _ua => (
+    isa     => InstanceOf ['Mojo::UserAgent'],
+    default => method() { Mojo::UserAgent->new },
 );
 
-has _username => (
-    is        => 'ro',
+param _username => (
     isa       => NonEmptyStr,
     lazy      => 1,
     init_arg  => 'username',
     predicate => '_has_username',
-    default   => sub ($self) { $ENV{OPENSKY_USERNAME} // $self->_config_data->{opensky}{username} },
+    default   => method() { $ENV{OPENSKY_USERNAME} // $self->_config_data->{opensky}{username} },
 );
 
-has _password => (
-    is        => 'ro',
+param _password => (
     isa       => NonEmptyStr,
     lazy      => 1,
     init_arg  => 'password',
     predicate => '_has_password',
-    default   => sub ($self) { $ENV{OPENSKY_PASSWORD} // $self->_config_data->{opensky}{password} },
+    default   => method() { $ENV{OPENSKY_PASSWORD} // $self->_config_data->{opensky}{password} },
 );
 
-has _base_url => (
-    is       => 'ro',
+param _base_url => (
     init_arg => 'base_url',
     isa      => NonEmptyStr,
     lazy     => 1,
-    default  => sub ($self) {
+    default  => method() {
         $self->_config_data->{_}{base_url} // 'https://opensky-network.org/api';
     },
 );
 
-has limit_remaining => (
-    is      => 'ro',
+field limit_remaining => (
     isa     => Int | Undef,
-    lazy    => 1,
     writer  => '_set_limit_remaining',
     default => undef,
 );
@@ -141,7 +126,7 @@ signature_for get_states => (
     named_to_list => 1,
 );
 
-sub get_states ( $self, $seconds, $icao24, $bbox, $extended ) {
+method get_states( $seconds, $icao24, $bbox, $extended ) {
     my %params = (
         maybe time     => $seconds,
         maybe icao24   => $icao24,
@@ -171,7 +156,7 @@ signature_for get_my_states => (
     named_to_list => 1,
 );
 
-sub get_my_states ( $self, $seconds, $icao24, $serials ) {
+method get_my_states( $seconds, $icao24, $serials ) {
     my %params = (
         extended      => 1,
         maybe time    => $seconds,
@@ -188,7 +173,7 @@ sub get_my_states ( $self, $seconds, $icao24, $serials ) {
     );
 }
 
-sub get_flights_from_interval ( $self, $begin, $end ) {
+method get_flights_from_interval( $begin, $end ) {
     if ( $begin >= $end ) {
         croak 'The end time must be greater than or equal to the start time.';
     }
@@ -204,7 +189,7 @@ sub get_flights_from_interval ( $self, $begin, $end ) {
     );
 }
 
-sub get_flights_by_aircraft ( $self, $icao24, $begin, $end ) {
+method get_flights_by_aircraft( $icao24, $begin, $end ) {
     if ( $begin >= $end ) {
         croak 'The end time must be greater than or equal to the start time.';
     }
@@ -220,7 +205,7 @@ sub get_flights_by_aircraft ( $self, $icao24, $begin, $end ) {
     );
 }
 
-sub get_arrivals_by_airport ( $self, $airport, $begin, $end ) {
+method get_arrivals_by_airport( $airport, $begin, $end ) {
     if ( $begin >= $end ) {
         croak 'The end time must be greater than or equal to the start time.';
     }
@@ -236,7 +221,7 @@ sub get_arrivals_by_airport ( $self, $airport, $begin, $end ) {
     );
 }
 
-sub get_departures_by_airport ( $self, $airport, $begin, $end ) {
+method get_departures_by_airport( $airport, $begin, $end ) {
     if ( $begin >= $end ) {
         croak 'The end time must be greater than or equal to the start time.';
     }
@@ -252,7 +237,7 @@ sub get_departures_by_airport ( $self, $airport, $begin, $end ) {
     );
 }
 
-sub get_track_by_aircraft ( $self, $icao24, $time ) {
+method get_track_by_aircraft( $icao24, $time ) {
     if ( $time != 0 && ( time - $time ) > 2592 * 1e3 ) {
         croak 'It is not possible to access flight tracks from more than 30 days in the past.';
     }
@@ -277,7 +262,7 @@ signature_for _get_response => (
     named_to_list => 1,
 );
 
-sub _get_response ( $self, $route, $params, $credits, $response_class, $no_auth_required ) {
+method _get_response( $route, $params, $credits, $response_class, $no_auth_required ) {
     my $url = $self->_url( $route, $params, $no_auth_required );
 
     if ( !$self->testing ) {
@@ -334,7 +319,7 @@ sub _get_response ( $self, $route, $params, $credits, $response_class, $no_auth_
     );
 }
 
-sub delay_remaining ( $self, $method ) {
+method delay_remaining($method) {
     state $rate_limits = {
         'get_states' => {
             route  => '/states/all',
@@ -370,17 +355,17 @@ sub delay_remaining ( $self, $method ) {
 }
 
 # an easy target to override for testing
-sub _GET ( $self, $url ) {
+method _GET($url) {
     $self->_debug("GET $url\n");
     return $self->_ua->get($url)->res;
 }
 
-sub _debug ( $self, $msg ) {
+method _debug($msg) {
     return if !$self->debug;
     say STDERR $msg;
 }
 
-sub _url ( $self, $url, $params = {}, $no_auth_required = 0 ) {
+method _url( $url, $params = {}, $no_auth_required = 0 ) {
     my $username = $self->_username;
     my $password = $self->_password;
     if ( ( !$username || !$password ) && $no_auth_required ) {
@@ -390,8 +375,6 @@ sub _url ( $self, $url, $params = {}, $no_auth_required = 0 ) {
     $url->query($params);
     return $url;
 }
-
-__PACKAGE__->meta->make_immutable;
 
 __END__
 
