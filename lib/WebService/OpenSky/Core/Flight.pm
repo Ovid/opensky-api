@@ -2,8 +2,7 @@ package WebService::OpenSky::Core::Flight;
 
 # ABSTRACT: Flight class
 
-use Moose;
-use experimental qw(signatures);
+use WebService::OpenSky::Moose;
 
 our $VERSION = '0.3';
 
@@ -23,9 +22,7 @@ sub _get_params ($class) {
       arrivalAirportCandidatesCount
     );
 }
-has [ __PACKAGE__->_get_params() ] => ( is => 'ro', required => 1 );
-
-__PACKAGE__->meta->make_immutable;
+param [ __PACKAGE__->_get_params() ] => ();
 
 __END__
 

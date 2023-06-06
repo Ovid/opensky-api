@@ -1,24 +1,22 @@
 package WebService::OpenSky::Response::States;
 
 # ABSTRACT: A class representing a states response from the OpenSky Network API
-use Moose;
+use WebService::OpenSky::Moose;
 use WebService::OpenSky::Core::StateVector;
-use experimental qw(signatures);
 extends 'WebService::OpenSky::Response';
 
 our $VERSION = '0.3';
 
-sub _create_response_objects ($self) {
+method _create_response_objects() {
     return [ map { WebService::OpenSky::Core::StateVector->new($_) } $self->raw_response->{states}->@* ];
 }
 
-sub _empty_response ($self) {
+method _empty_response() {
     return {
         time   => 0,
         states => [],
     };
 }
-__PACKAGE__->meta->make_immutable;
 
 __END__
 
