@@ -35,7 +35,7 @@ our $VERSION = '0.3';
 param config => (
     is      => 'ro',
     isa     => NonEmptyStr,
-    default => sub ($self) { $ENV{HOME} . '/.openskyrc' },
+    default => method() { $ENV{HOME} . '/.openskyrc' },
 );
 
 param [qw/debug raw testing/] => (
@@ -45,7 +45,7 @@ param [qw/debug raw testing/] => (
 
 field _config_data => (
     isa     => HashRef,
-    default => sub ($self) {
+    default => method() {
         my $file = $self->config // '';
         if ( !-e $file ) {
             if ($self->testing                                            # if we're testing
@@ -63,7 +63,7 @@ field _config_data => (
 
 field _last_request_time => (
     isa     => HashRef [Int],
-    default => sub {
+    default => method() {
         return {
             '/states/all' => 0,
             '/states/own' => 0,
@@ -73,7 +73,7 @@ field _last_request_time => (
 
 field _ua => (
     isa     => InstanceOf ['Mojo::UserAgent'],
-    default => sub { Mojo::UserAgent->new },
+    default => method() { Mojo::UserAgent->new },
 );
 
 param _username => (
@@ -81,7 +81,7 @@ param _username => (
     lazy      => 1,
     init_arg  => 'username',
     predicate => '_has_username',
-    default   => sub ($self) { $ENV{OPENSKY_USERNAME} // $self->_config_data->{opensky}{username} },
+    default   => method() { $ENV{OPENSKY_USERNAME} // $self->_config_data->{opensky}{username} },
 );
 
 param _password => (
@@ -89,14 +89,14 @@ param _password => (
     lazy      => 1,
     init_arg  => 'password',
     predicate => '_has_password',
-    default   => sub ($self) { $ENV{OPENSKY_PASSWORD} // $self->_config_data->{opensky}{password} },
+    default   => method() { $ENV{OPENSKY_PASSWORD} // $self->_config_data->{opensky}{password} },
 );
 
 param _base_url => (
     init_arg => 'base_url',
     isa      => NonEmptyStr,
     lazy     => 1,
-    default  => sub ($self) {
+    default  => method() {
         $self->_config_data->{_}{base_url} // 'https://opensky-network.org/api';
     },
 );
