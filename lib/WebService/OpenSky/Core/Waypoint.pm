@@ -6,23 +6,24 @@ use WebService::OpenSky::Moose;
 
 our $VERSION = '0.3';
 
-sub _get_params ($class) {
-    return qw(
-      time
-      latitude
-      longitude
-      baro_altitude
-      true_track
-      on_ground
-    );
-}
-param [ __PACKAGE__->_get_params() ] => ();
+my @PARAMS = qw(
+  time
+  latitude
+  longitude
+  baro_altitude
+  true_track
+  on_ground
+);
+
+param [@PARAMS];
 
 around 'BUILDARGS' => sub ( $orig, $class, $waypoint ) {
     my %value_for;
-    @value_for{ $class->_get_params } = @$waypoint;
+    @value_for{@PARAMS} = @$waypoint;
     return $class->$orig(%value_for);
 };
+
+sub _get_params ($class) {@PARAMS}
 
 __END__
 

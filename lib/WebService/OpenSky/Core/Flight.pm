@@ -6,8 +6,8 @@ use WebService::OpenSky::Moose;
 
 our $VERSION = '0.3';
 
-sub _get_params ($class) {
-    return qw(
+param [
+    qw(
       icao24
       firstSeen
       estDepartureAirport
@@ -20,9 +20,8 @@ sub _get_params ($class) {
       estArrivalAirportVertDistance
       departureAirportCandidatesCount
       arrivalAirportCandidatesCount
-    );
-}
-param [ __PACKAGE__->_get_params() ] => ();
+    )
+];
 
 __END__
 

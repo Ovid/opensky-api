@@ -26,17 +26,15 @@ my @PARAMS = qw(
   category
 );
 
+param [@PARAMS];
+
 around 'BUILDARGS' => sub ( $orig, $class, $state ) {
     my %value_for;
-    @value_for{ $class->_get_params } = @$state;
+    @value_for{@PARAMS} = @$state;
     return $class->$orig(%value_for);
 };
 
-param [@PARAMS] => ();
-
-sub _get_params ($class) {
-    return @PARAMS;
-}
+sub _get_params ($class) {@PARAMS}
 
 method category_name() {
     my $category = $self->category // 0;
