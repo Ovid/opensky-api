@@ -3,7 +3,7 @@ package WebService::OpenSky::Moose;
 # ABSTRACT: MooseX::Extended::Custom for WebService::OpenSky
 
 use MooseX::Extended::Custom;
-our $VERSION = '0.001';
+our $VERSION = '0.4';
 
 # If $^P is true, we're running under the debugger.
 #

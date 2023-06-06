@@ -10,7 +10,7 @@ use WebService::OpenSky::Types qw(
   PositiveOrZeroInt
 );
 
-our $VERSION = '0.3';
+our $VERSION = '0.4';
 
 param rows => (
     isa    => ArrayRef [Defined],

@@ -5,7 +5,7 @@ use WebService::OpenSky::Moose;
 use WebService::OpenSky::Core::Waypoint;
 extends 'WebService::OpenSky::Response';
 
-our $VERSION = '0.3';
+our $VERSION = '0.4';
 
 my @ATTRS = qw(
   icao24

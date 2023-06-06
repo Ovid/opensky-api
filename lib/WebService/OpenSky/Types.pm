@@ -14,7 +14,7 @@ use Type::Library
   );
 
 use Type::Utils -all;
-our $VERSION = '0.3';
+our $VERSION = '0.4';
 
 BEGIN {
     extends qw(

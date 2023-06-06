@@ -5,7 +5,7 @@ use WebService::OpenSky::Moose;
 use WebService::OpenSky::Core::StateVector;
 extends 'WebService::OpenSky::Response';
 
-our $VERSION = '0.3';
+our $VERSION = '0.4';
 
 method _create_response_objects() {
     return [ map { WebService::OpenSky::Core::StateVector->new($_) } $self->raw_response->{states}->@* ];
