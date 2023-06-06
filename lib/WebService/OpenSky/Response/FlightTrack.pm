@@ -2,7 +2,7 @@
 
 package WebService::OpenSky::Response::FlightTrack;
 
-our $VERSION = '0.010';
+our $VERSION = '0.1';
 use Moose;
 use WebService::OpenSky::Core::Waypoint;
 use experimental qw(signatures);

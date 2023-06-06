@@ -2,7 +2,7 @@
 
 package WebService::OpenSky::Response;
 
-our $VERSION = '0.010';
+our $VERSION = '0.1';
 use Moose;
 use WebService::OpenSky::Utils::Iterator;
 use WebService::OpenSky::Types qw(

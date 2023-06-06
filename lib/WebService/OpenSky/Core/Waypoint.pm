@@ -2,7 +2,7 @@
 
 package WebService::OpenSky::Core::Waypoint;
 
-our $VERSION = '0.010';
+our $VERSION = '0.1';
 
 use Moose;
 use experimental qw(signatures);
