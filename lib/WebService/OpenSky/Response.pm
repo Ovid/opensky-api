@@ -16,7 +16,7 @@ our $VERSION = '0.3';
 
 param raw_response => (
     isa     => ArrayRef | HashRef,
-    default => sub ($self) { $self->_empty_response },
+    default => method() { $self->_empty_response },
 );
 
 param route => (
