@@ -3,6 +3,7 @@ Revision history for OpenSky-API
 {{$NEXT}}
 
 0.009     2023-06-05 09:26:38 CEST
+          - Fix case of one module name
 
 0.008     2023-06-04 11:14:43 CEST
           - Assert minimum Perl version in dist.ini.
