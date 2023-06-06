@@ -32,7 +32,7 @@ use Mojo::JSON qw( decode_json );
 use Type::Params -sigs;
 use experimental qw( signatures );
 
-our $VERSION = '0.2';
+our $VERSION = '0.3';
 
 has config => (
     is      => 'ro',

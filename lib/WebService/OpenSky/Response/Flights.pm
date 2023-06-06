@@ -7,7 +7,7 @@ use WebService::OpenSky::Core::Flight;
 use experimental qw(signatures);
 extends 'WebService::OpenSky::Response';
 
-our $VERSION = '0.2';
+our $VERSION = '0.3';
 
 sub _create_response_objects ($self) {
     return [ map { WebService::OpenSky::Core::Flight->new($_) } $self->raw_response->@* ];

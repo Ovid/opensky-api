@@ -4,7 +4,7 @@ package WebService::OpenSky::Core::StateVector;
 
 use Moose;
 use experimental qw(signatures);
-our $VERSION = '0.2';
+our $VERSION = '0.3';
 
 my @PARAMS = qw(
   icao24

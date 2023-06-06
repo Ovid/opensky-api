@@ -5,7 +5,7 @@ package WebService::OpenSky::Core::Waypoint;
 use Moose;
 use experimental qw(signatures);
 
-our $VERSION = '0.2';
+our $VERSION = '0.3';
 
 sub _get_params ($class) {
     return qw(

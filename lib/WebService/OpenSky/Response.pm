@@ -14,7 +14,7 @@ use WebService::OpenSky::Types qw(
 use Carp 'croak';
 use experimental qw(signatures);
 
-our $VERSION = '0.2';
+our $VERSION = '0.3';
 
 has raw_response => (
     is      => 'ro',

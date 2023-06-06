@@ -11,7 +11,7 @@ use WebService::OpenSky::Types qw(
 );
 use experimental qw(signatures);
 
-our $VERSION = '0.2';
+our $VERSION = '0.3';
 
 has '_rows' => (
     is       => 'ro',

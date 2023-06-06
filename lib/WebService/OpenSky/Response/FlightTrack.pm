@@ -6,7 +6,7 @@ use WebService::OpenSky::Core::Waypoint;
 use experimental qw(signatures);
 extends 'WebService::OpenSky::Response';
 
-our $VERSION = '0.2';
+our $VERSION = '0.3';
 
 my @ATTRS = qw(
   icao24
