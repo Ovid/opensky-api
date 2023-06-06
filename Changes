@@ -1,6 +1,8 @@
 Revision history for OpenSky-API
 
 {{$NEXT}}
+
+0.3       2023-06-06 08:05:17 CEST
           - Convert to MooseX::Extended
 
 0.2       2023-06-06 06:54:56 CEST
