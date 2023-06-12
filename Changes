@@ -2,6 +2,8 @@ Revision history for OpenSky-API
 
 {{$NEXT}}
 
+0.4       2023-06-12 12:42:54 CEST
+
           - Remove undeclared dependency on Syntax::Keyword::Try
 
 0.3       2023-06-06 08:05:17 CEST

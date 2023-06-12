@@ -83,47 +83,47 @@
    "provides" : {
       "WebService::OpenSky" : {
          "file" : "lib/WebService/OpenSky.pm",
-         "version" : "0.3"
+         "version" : "0.4"
       },
       "WebService::OpenSky::Core::Flight" : {
          "file" : "lib/WebService/OpenSky/Core/Flight.pm",
-         "version" : "0.3"
+         "version" : "0.4"
       },
       "WebService::OpenSky::Core::StateVector" : {
          "file" : "lib/WebService/OpenSky/Core/StateVector.pm",
-         "version" : "0.3"
+         "version" : "0.4"
       },
       "WebService::OpenSky::Core::Waypoint" : {
          "file" : "lib/WebService/OpenSky/Core/Waypoint.pm",
-         "version" : "0.3"
+         "version" : "0.4"
       },
       "WebService::OpenSky::Moose" : {
          "file" : "lib/WebService/OpenSky/Moose.pm",
-         "version" : "0.3"
+         "version" : "0.4"
       },
       "WebService::OpenSky::Response" : {
          "file" : "lib/WebService/OpenSky/Response.pm",
-         "version" : "0.3"
+         "version" : "0.4"
       },
       "WebService::OpenSky::Response::FlightTrack" : {
          "file" : "lib/WebService/OpenSky/Response/FlightTrack.pm",
-         "version" : "0.3"
+         "version" : "0.4"
       },
       "WebService::OpenSky::Response::Flights" : {
          "file" : "lib/WebService/OpenSky/Response/Flights.pm",
-         "version" : "0.3"
+         "version" : "0.4"
       },
       "WebService::OpenSky::Response::States" : {
          "file" : "lib/WebService/OpenSky/Response/States.pm",
-         "version" : "0.3"
+         "version" : "0.4"
       },
       "WebService::OpenSky::Types" : {
          "file" : "lib/WebService/OpenSky/Types.pm",
-         "version" : "0.3"
+         "version" : "0.4"
       },
       "WebService::OpenSky::Utils::Iterator" : {
          "file" : "lib/WebService/OpenSky/Utils/Iterator.pm",
-         "version" : "0.3"
+         "version" : "0.4"
       }
    },
    "release_status" : "stable",
@@ -138,7 +138,7 @@
          "web" : "https://github.com/Ovid/opensky-api"
       }
    },
-   "version" : "0.3",
+   "version" : "0.4",
    "x_contributors" : [
       "Ovid <ovid@cpan.org>"
    ],
