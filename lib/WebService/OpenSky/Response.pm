@@ -12,7 +12,7 @@ use WebService::OpenSky::Types qw(
   Route
 );
 
-our $VERSION = '0.4';
+our $VERSION = '0.5';
 
 param raw_response => (
     isa     => ArrayRef | HashRef,

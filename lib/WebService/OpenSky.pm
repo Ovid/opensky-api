@@ -30,7 +30,7 @@ use Mojo::URL;
 use Mojo::JSON qw( decode_json );
 use Type::Params -sigs;
 
-our $VERSION = '0.4';
+our $VERSION = '0.5';
 
 param config => (
     is      => 'ro',

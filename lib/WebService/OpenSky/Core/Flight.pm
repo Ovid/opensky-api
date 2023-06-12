@@ -4,7 +4,7 @@ package WebService::OpenSky::Core::Flight;
 
 use WebService::OpenSky::Moose;
 
-our $VERSION = '0.4';
+our $VERSION = '0.5';
 
 param [
     qw(
