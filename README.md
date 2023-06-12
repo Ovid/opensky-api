@@ -4,7 +4,7 @@ WebService::OpenSky - Perl interface to the OpenSky Network API
 
 # VERSION
 
-version 0.3
+version 0.4
 
 # SYNOPSIS
 
